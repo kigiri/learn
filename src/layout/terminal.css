@@ -1,0 +1,7 @@
+.terminal-layout {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  /*right: 0;*/
+  /*bottom: 0*/
+}
