@@ -2,6 +2,8 @@
 const firstLetter = /^./;
 const charFollowingDelimitors = /([-_. ]+.)/
 const consecutiveSpaces = /\s\s/;
+const whiteSpace = /\s/;
+const wordStop = /[^A-Za-z-_]/;
 const reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
 const reComboMark = /[\u0300-\u036f\ufe20-\ufe23]/g;
 const toUpper = str => str.toUpperCase();
@@ -29,10 +31,22 @@ const deburrLetter = letter => deburredLetters[letter];
 const deburr = str => str.replace(reLatin1, deburrLetter)
   .replace(reComboMark, '');
 
+const matches = {
+  firstLetter,
+  charFollowingDelimitors,
+  consecutiveSpaces,
+  whiteSpace,
+  wordStop,
+  reLatin1,
+  reComboMark,
+};
+
+const tests = map(matches, match => str => match.test(str));
+tests.not = map(tests, test => str => !test(str));
+
 module.exports = {
-  matches: {
-    firstLetter,
-  },
+  tests,
+  matches,
   toUpper,
   insert: (str, idx, value) => str.slice(0, idx) + value + str.slice(idx),
   toCamel: str => deburr(str).replace(charFollowingDelimitors, toUpper),

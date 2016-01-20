@@ -16,7 +16,7 @@ module.exports = (tagName, props) => {
 
   const domGetter = () => {
     const newElem = document.getElementById(props.id);
-    log('found', props.id, newElem)
+
     if (newElem !== elem()) {
       elem.set(newElem);
     }

@@ -10,6 +10,7 @@ function isFn(fn) { return typeof fn === 'function' }
 function isArr(arr) { return arr && arr.constructor === Array }
 function isDef(val) { return val !== undefined }
 function isNum(num) { return !isNaN(num) && typeof num === 'number' }
+function isBool(b) { return b === true || b === false }
 function isObj(obj) { return obj && typeof obj === 'object' }
 function isStr(str) { return typeof str === 'string' }
 function isUndef(val) { return val === undefined }
@@ -34,6 +35,7 @@ module.exports = {
   str: isStr,
   obj: isObj,
   num: isNum,
+  bool: isBool,
   node: isNode,
   undef: isUndef,
   float: isFloat,

@@ -5,7 +5,7 @@ const cursor = require('lib/cursor');
 const observables = require('state').observ;
 
 const routes = {
-  '/home': { load: require('route/home/') },
+  '/home': { load: require('route/home') },
   '/user': { load: require('route/user') },
   '/train': { load: require('route/train') },
 }
@@ -25,6 +25,8 @@ const loadHref = atom => {
 
   if (!route) {
     return router.atom.set('/home');
+  } else {
+    console.log(route)
   }
 
   route.load().then(loadView);
