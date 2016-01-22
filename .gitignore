@@ -50,3 +50,4 @@ Temporary Items
 # JavaScript bullshit
 public/
 node_modules/
+tools/config.js

@@ -1,12 +1,4 @@
-function promisify(f){
-  return function () {
-    var a = Array.prototype.slice.call(arguments);
-
-    return new Promise((s, j) =>
-      f.apply(this, a.concat((err, val) => err ? j(err) : s(val))))
-  }
-}
-
+const promisify = require('./tools/promisify')
 const _ = require('lodash');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
@@ -18,10 +10,10 @@ const addArray = (src, key, val) => ((src[key]
 
 const getExt = path => path.split(/\.(.+?$)/)[1] || 'js';
 const assetGetter = (acc, path) => addArray(acc, getExt(path), readFile(path));
-const assets = {};
 
 const removeComments = data => data.toString('utf8')
   .replace(/(\/\*(.|\s)*?\*\/\s*)/g, () => '')
+
 const toBase64 = data => data.toString('base64')
 
 const handlers = {
@@ -30,6 +22,7 @@ const handlers = {
   ico: toBase64,
 }
 
+const assets = {};
 const saveAsset = ext => val => assets[ext] = val.map(handlers[ext]).join('\n')
 
 module.exports = () => Promise.all(_([

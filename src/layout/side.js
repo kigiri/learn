@@ -7,10 +7,10 @@ const leftSide = h.curry('div.left-side').style;
 
 module.exports = {
   right: (props, children) => rightSide({
-    width: props.split * props.viewWidth,
+    width: Math.floor(props.split * props.viewWidth),
   }, children),
 
   left: (props, children) => leftSide({
-    width: props.viewWidth - props.split * props.viewWidth,
+    width: Math.floor(props.viewWidth - props.split * props.viewWidth),
   }, children),
 }

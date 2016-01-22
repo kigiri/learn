@@ -5,14 +5,14 @@ const observ = require('observ');
 const caret = require('lib/caret');
 const str = require('lib/str')
 const each = require('lib/each')
-const findWordBoundaries = require('lib/text/find-word-boundaries')
+// const findWordBoundaries = require('lib/text/find-word-boundaries')
 
 
-console.log(findWordBoundaries('  salut.c   ', 4))
-console.log(findWordBoundaries('  salut.c   ', 5))
-console.log(findWordBoundaries('  salut.c   ', 6))
-console.log(findWordBoundaries('  salut.c   ', 9))
-console.log(findWordBoundaries('  salut.c   ', 0))
+// console.log(findWordBoundaries('  salut.c   ', 4))
+// console.log(findWordBoundaries('  salut.c   ', 5))
+// console.log(findWordBoundaries('  salut.c   ', 6))
+// console.log(findWordBoundaries('  salut.c   ', 9))
+// console.log(findWordBoundaries('  salut.c   ', 0))
 
 module.exports = () => {  
   const input = linker('input#terminal-input.pure-input-1', {
@@ -64,7 +64,7 @@ module.exports = () => {
   const keydown = handler({
     D: {
       meta: expandSelection,
-      ctrl: () => log('wat')
+      ctrl: expandSelection,
     },
     enter: ev => {
       const el = input.elem()

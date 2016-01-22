@@ -8,7 +8,7 @@ const wrapper = h.curry('div.terminal-layout.pure-g', {
   style: {
     position: 'absolute',
     top: 0,
-    background: 'red',
+    background: '#bada55',
     color: 'black',
     height: '100%',
     alignItems: 'flex-end',

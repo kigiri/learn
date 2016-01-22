@@ -51,6 +51,7 @@ const nodeModules = [ join('node_modules') ];
 
 getAssets().then(assets => {
   const config = {
+    bail: true,
     errorDetails: true,
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
@@ -77,7 +78,7 @@ getAssets().then(assets => {
           loader: 'strict'
         },
         {
-          test: /(\/route\/.+\/|\.async\.js$)/,
+          test: /((\\|\/)route\2.+\2|\.async\.js$)/,
           exclude: nodeModules,
           loader: "promise?global!",
         },
@@ -115,5 +116,5 @@ getAssets().then(assets => {
 
   new webpackDevServer(webpack(config), opts)
     .listen(opts.port, opts.host, err => { if (err) throw err });
-})
+}).catch(err => console.log(err))
 
