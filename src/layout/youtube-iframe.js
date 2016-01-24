@@ -31,7 +31,7 @@ const render = props => {
   }
 
   const src = 'https://www.youtube.com/embed/'+ props.hash
-    +'?'+ query.join('&amp') 
+    +'?'+ query.join('&amp;') 
 
   const iframeProps = {
     src,
