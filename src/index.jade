@@ -1,0 +1,16 @@
+doctype html
+html
+  head
+    meta(http-equiv='Content-type' content='text/html; charset=utf-8')
+    meta(http-equiv='x-dns-prefetch-control' content='on')
+    each dns in dnsList
+      link(rel='dns-prefetch' href!=dns)
+    title #{title}
+    link(rel='shortcut icon'
+         type='image/x-icon'
+         href!='data:image/x-icon;base64,'+ ico )
+    style(type='text/css') !{ css }
+  body
+    #app
+      .spinner
+    script(type='text/javascript') !{ js }

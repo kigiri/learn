@@ -1,7 +1,8 @@
 const m = require('moment')
 const _ = require('lodash')
+const include = require('./include')
 const promisify = require('./promisify')
-const github = new (require('github'))({
+const github = include('github', {
   version: "3.0.0",
   protocol: 'https',
   host: 'api.github.com',

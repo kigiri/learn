@@ -12,8 +12,6 @@ const evHook = require('virtual-dom/virtual-hyperscript/hooks/ev-hook');
 
 const pixelize = require('lib/default-unit');
 
-module.exports = h;
-
 const transformProperties = (value, propName, props) => {
   if (!is.hook(value) && /^ev[-A-Z]/.test(propName)) {
     props[propName] = evHook(value)
@@ -151,3 +149,4 @@ h.curry = (tagName, properties) => (args => {
   return curryfied;
 })(parseArgs(tagName, properties));
 
+module.exports = h;

@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "node --harmony build.js",
-    "start": "node --harmony node_modules/webpack-dev-server/bin/webpack-dev-server.js"
+    "start": "node --harmony dev-server.js"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.1",
@@ -9,9 +9,10 @@
     "babel-loader": "^6.2.1",
     "babel-preset-modern": "^1.0.0",
     "css-loader": "^0.23.1",
+    "ftps-promise": "^0.1.0",
     "github": "^0.2.4",
-    "html-webpack-plugin": "^1.7.0",
-    "lodash": "^3.10.1",
+    "html-webpack-plugin": "^2.7.1",
+    "lodash": "^4.0.0",
     "moment": "^2.11.1",
     "node-progress": "^0.1.0",
     "postcss-loader": "^0.8.0",
@@ -30,6 +31,7 @@
     "codemirror": "^5.10.0",
     "dom-delegator": "^13.1.0",
     "geval": "^2.1.1",
+    "jade": "^1.11.0",
     "main-loop": "^3.2.0",
     "mercury": "^14.0.0",
     "mercury-router": "^1.0.9",

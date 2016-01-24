@@ -5,57 +5,44 @@ const _path = require('path');
 const pathJoin = _path.join;
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const syncPlugin = require('./tools/syncPlugin');
 const join = _.partial(pathJoin, __dirname);
 const include = [ _path.resolve(__dirname, 'src') ];
+const commonConfig = require('./common.config.js');
 
 // require('./copyAssets');
 
-const routeDir = './src/route/';
-const entry = fs.readdirSync(routeDir).reduce((acc, dirName) => {
-  if (/^index\.js$/.test(dirName)) {
-    acc[dirName] = routeDir + dirName
-  }
-  return acc;
-}, {});
-
-entry.main = './src/main.js';
-
-const config = {
-  errorDetails: true,
+const config = _.defaults({
   cache: false,
-  plugins: [
-    new ProgressBarPlugin(),
-    new webpack.optimize.CommonsChunkPlugin({ name: 'core' }),
-    new webpack.optimize.UglifyJsPlugin({
-      exclude: /[-_.]min\.js/i,
-      sourceMap: false,
-      compress: { warnings: false }
-    }),
-  ],
-  module: {
-    loaders: [{
-        test: /\.jsx?$/,
-        include,
-        loader: 'babel',
-        query: {
-          presets: ['modern']
-        }
-      },
-      {
-        test: /\.js$/,
-        exclude: [ join('node_modules') ],
-        loader: 'strict'
-      },
-      { test: /\.css$/, loader: "style-loader!css-loader" }
-    ]
-  },
-  progress: true,
   output: { 
-    filename: 'test/js/[name].js',
-    chunkFilename: 'test/js/[id].js'
+    filename: '[name].js',
+    chunkFilename: 'chunk-[name].js',
+    path: 'public'
   },
-  entry
-}
+  entry: './src/main.js'
+}, commonConfig);
+
+config.plugins.push(new ProgressBarPlugin(),
+  new webpack.optimize.OccurrenceOrderPlugin(true),
+  new webpack.optimize.AggressiveMergingPlugin(),
+  new syncPlugin(),
+  new webpack.optimize.UglifyJsPlugin({
+    exclude: /[-_.]min\.js/i,
+    sourceMap: false,
+    comments: false,
+    compress: { warnings: false }
+  }),
+  new webpack.optimize.MinChunkSizePlugin({
+    minChunkSize: 35000, // should safely be compressed under 3
+  })
+)
+
+config.module.loaders.push({
+  test: /\.jsx?$/,
+  include,
+  loader: 'babel',
+  query: { presets: ['modern'] }
+});
 
 module.exports = config;
 
