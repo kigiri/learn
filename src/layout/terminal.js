@@ -5,7 +5,7 @@ require('./terminal.css');
 
 const ratio = 16 / 9;
 
-const wrapper = h.curry('div.terminal-layout.pure-g', {
+const wrapper = h.curry('div.terminal-layout', {
   style: {
     position: 'absolute',
     top: 0,

@@ -1,31 +1,53 @@
 .terminal-layout {
-  position: absolute;
-  box-sizing: border-box;
-  width: 100%;
-  /*right: 0;*/
   /*bottom: 0*/
+  /*right: 0;*/
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
 }
 
 #terminal-form input {
-  border: 1px solid transparent;
-  background: transparent;
-  box-shadow: none;
   /*text-shadow: 1px 1px 3px #232532;*/
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
 }
 
 #terminal-form {
+  /*text-shadow: 1px 1px 3px #232532;*/
   background: #282A36;
+  bottom: 0;
+  box-sizing: border-box;
   color: #50fa7b;
   font-family: monospace;
   font-size: 15px;
-  /*text-shadow: 1px 1px 3px #232532;*/
-  padding-left: 12px
+  padding-left: 12px;
+  position: absolute;
+  right: 0;
+  width: 100%;
 }
 
 #terminal-form::before {
   content: '❯';
   display: block;
-  position: absolute;
   line-height: 38px;
-  margin-left: -4px
+  margin-left: -4px;
+  position: absolute;
 }
+
+.video-button {
+  border-top: 1px solid #45495A;
+  box-shadow: 1px -1px 2px -1px #1B1D25;
+}
+
+.video-button:hover {
+  box-shadow: 1px -1px 8px -1px #1B1D25;
+}
+
+#video-menu {
+  background: transparent;
+  letter-spacing: 0.01em;
+  position: absolute;
+  text-align: right;
+}
+
