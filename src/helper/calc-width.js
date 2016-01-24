@@ -1,17 +1,14 @@
 const ratio = 16 / 9
 
-const clampWidth = (height, width) => {
-  if ((width / ratio) > (height - 76)) {
-    return (height - 76) * ratio
-  }
-  return width
-}
+const clamp = (height, width) => ((width / ratio) > (height - 76))
+  ? (height - 76) * ratio
+  : width
 
-const calcWidth = state => {
-  if (state.videoDisplay === 'fullscreen') {
-    return Math.floor(clampWidth(state.viewHeight, state.viewWidth))
-  }
-  return Math.floor(clampWidth(state.viewHeight, state.split * state.viewWidth))
-}
+const calcWidth = state => Math.floor(clamp(state.viewHeight,
+  state.videoDisplay === 'fullscreen'
+    ? state.viewWidth
+    : state.split * state.viewWidth))
+
+calcWidth.ratio = ratio
 
 module.exports = calcWidth

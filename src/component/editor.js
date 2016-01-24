@@ -34,7 +34,7 @@ module.exports = () => {
         tabSize: 2,
         scrollPastEnd: true,
         value: "function myScript() { return 100 }\n",
-        mode:  "javascript",
+        mode: "javascript",
         inputStyle: 'contenteditable',
         scrollbarStyle: 'null',
         keyMap: 'sublime',
