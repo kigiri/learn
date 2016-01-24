@@ -52,7 +52,6 @@ const nodeModules = [ join('node_modules') ];
 
 getAssets().then(assets => {
   const config = _.defaults({
-    bail: true,
     output: { path: '/', filename: '/bundle.js' },
     devServer: { hot: true },
     // devtool: 'eval-source-map',
