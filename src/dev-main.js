@@ -6,8 +6,6 @@ require('lib/debug')({
   timestamp: true,
 });
 
-wesh('dev-main loaded')
-
 const bootstrap = require('./bootstrap')(require('./render'));
 const hotVersion = bootstrap.state.observ._hotVersion;
 

@@ -25,8 +25,6 @@ const loadHref = atom => {
 
   if (!route) {
     return router.atom.set('/home');
-  } else {
-    console.log(route)
   }
 
   route.load().then(loadView);

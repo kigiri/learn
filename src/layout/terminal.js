@@ -46,7 +46,7 @@ const menu = h('div.pure-menu.pure-menu-horizontal', {
 
 module.exports = (props, children) => wrapper({
   style: { paddingTop: videoDisplay() === 'hide' ? 0 : props.width / ratio },
-  'ev-click': props.select
+}, form(children))
 }, [
   menu,
   form(children),

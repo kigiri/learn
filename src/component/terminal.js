@@ -9,13 +9,6 @@ const str = require('lib/str')
 const calcWidth = require('helper/calc-width')
 // const findWordBoundaries = require('lib/text/find-word-boundaries')
 
-
-// console.log(findWordBoundaries('  salut.c   ', 4))
-// console.log(findWordBoundaries('  salut.c   ', 5))
-// console.log(findWordBoundaries('  salut.c   ', 6))
-// console.log(findWordBoundaries('  salut.c   ', 9))
-// console.log(findWordBoundaries('  salut.c   ', 0))
-
 module.exports = () => {  
   const input = linker('input#terminal-input.pure-input-1', {
     autocapitalize: "off",

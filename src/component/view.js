@@ -8,7 +8,7 @@ const container = require('layout/container');
 const flex = { style: { flex: 1 } };
 
 module.exports = state => container([
-  side.left(state, menu(state)),
+  side.left(state, editor(state)),
   side.right(state, [
     terminal(state),
     video(state.videoId),
