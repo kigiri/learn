@@ -8,5 +8,11 @@
 }
 
 .right-side {
-  float: right;
+  float: right;  
+  box-shadow: 9px 0 18px 14px #22242F, -1px 0 #191B27;
+}
+
+#terminal-form {
+  border-top: 1px solid #383D56;
+  box-shadow: inset -4px 5px 16px -5px #232531, inset 0 1px #1F212C;
 }

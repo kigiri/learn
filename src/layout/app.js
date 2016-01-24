@@ -1,8 +1,7 @@
-const p = require('layout/pure');
+const h = require('lib/h');
 
-module.exports = (state, children) => p('div', {
-  id: 'app-yo-wesh',
-  style: {
-    height: state.viewHeight +'px',
-  }
+const app = h.curry('#app-yo-wesh').style;
+
+module.exports = (state, children) => app({
+  height: state.viewHeight,
 }, children);
