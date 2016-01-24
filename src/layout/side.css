@@ -1,13 +1,12 @@
 .left-side, .right-side {
   height: 100%;
-  float: left;
   position: relative;
 }
 
 .left-side {
-
+  float: left;
 }
 
 .right-side {
-
+  float: right;
 }

@@ -1,24 +1,33 @@
-const p = require('layout/pure');
+const h = require('lib/h')
+const videoDisplay = require('state').observ.videoDisplay
 
-require('./youtube-iframe.css');
+const videoWrapper = h.curry('div', { className: 'video-wrapper'}).style
+const iframe = h.curry('iframe', {
+  style: {
+    border: 'none',
+    background: 'transparent'
+  }
+})
+
+require('./youtube-iframe.css')
 
 const render = props => {
-  const query = [];
+  const query = []
 
   if (!props.showControls) {
-    query.push('controls=1');
+    query.push('controls=1')
   }
   if (!props.showInfo) {
-    query.push('showinfo=0');
+    query.push('showinfo=0')
   }
   if (props.autoPlay) {
-    query.push('autoplay=1');
+    query.push('autoplay=1')
   }
   if (!props.disableApi) {
-    query.push('enablejsapi=1');
+    query.push('enablejsapi=1')
   }
   if (!props.showRelated) {
-    query.push('rel=0');
+    query.push('rel=0')
   }
 
   const src = 'https://www.youtube.com/embed/'+ props.hash
@@ -29,10 +38,6 @@ const render = props => {
     id: props.id,
     width: props.width || 1280,
     height: props.height || 720,
-    style: {
-      border: 'none',
-      background: 'transparent'
-    }
   }
 
   if (props.preventFullScreen) {
@@ -41,9 +46,11 @@ const render = props => {
     iframeProps.mozAllowFullScreen = true
   }
 
-  return p('iframe', iframeProps);
+  return iframe(iframeProps)
 }
 
-render.wrapper = children => p('div', { className: 'video-wrapper'}, children);
+render.wrapper = child => videoWrapper({
+  paddingBottom: videoDisplay() === 'hide' ? 0 : ''
+}, child)
 
-module.exports = render;
+module.exports = render

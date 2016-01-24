@@ -7,6 +7,7 @@ const each = require('lib/each')
 const focusedElem = require('lib/event').focus
 const str = require('lib/str')
 const calcWidth = require('helper/calc-width')
+// const findWordBoundaries = require('lib/text/find-word-boundaries')
 
 module.exports = () => {  
   const input = linker('input#terminal-input.pure-input-1', {

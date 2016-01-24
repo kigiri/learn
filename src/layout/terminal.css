@@ -5,3 +5,27 @@
   /*right: 0;*/
   /*bottom: 0*/
 }
+
+#terminal-form input {
+  border: 1px solid transparent;
+  background: transparent;
+  box-shadow: none;
+  /*text-shadow: 1px 1px 3px #232532;*/
+}
+
+#terminal-form {
+  background: #282A36;
+  color: #50fa7b;
+  font-family: monospace;
+  font-size: 15px;
+  /*text-shadow: 1px 1px 3px #232532;*/
+  padding-left: 12px
+}
+
+#terminal-form::before {
+  content: '❯';
+  display: block;
+  position: absolute;
+  line-height: 38px;
+  margin-left: -4px
+}
