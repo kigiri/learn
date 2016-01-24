@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "node --harmony build.js",
-    "start": "node --harmony node_modules/webpack-dev-server/bin/webpack-dev-server.js"
+    "start": "node --harmony dev-server.js"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.1",
@@ -9,30 +9,37 @@
     "babel-loader": "^6.2.1",
     "babel-preset-modern": "^1.0.0",
     "css-loader": "^0.23.1",
+    "ftps-promise": "^0.1.0",
+    "github": "^0.2.4",
+    "html-webpack-plugin": "^2.7.1",
+    "lodash": "^4.0.0",
+    "moment": "^2.11.1",
+    "node-progress": "^0.1.0",
+    "postcss-loader": "^0.8.0",
     "precss": "^1.4.0",
-    "style-loader": "^0.13.0"
+    "progress": "^1.1.8",
+    "progress-bar-webpack-plugin": "^1.2.0",
+    "promise-loader": "^1.0.0",
+    "strict-loader": "^1.0.0",
+    "style-loader": "^0.13.0",
+    "superagent": "^1.7.1",
+    "superagent-promise": "^1.1.0",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.14.0"
   },
   "dependencies": {
     "codemirror": "^5.10.0",
     "dom-delegator": "^13.1.0",
     "geval": "^2.1.1",
-    "html-webpack-plugin": "^1.7.0",
-    "lodash": "^3.10.1",
+    "jade": "^1.11.0",
     "main-loop": "^3.2.0",
     "mercury": "^14.0.0",
     "mercury-router": "^1.0.9",
-    "node-progress": "^0.1.0",
     "observ": "^0.2.0",
     "observ-struct": "^6.0.0",
-    "postcss-loader": "^0.8.0",
-    "progress": "^1.1.8",
-    "progress-bar-webpack-plugin": "^1.2.0",
     "purecss": "^0.6.0",
-    "strict-loader": "^1.0.0",
     "value-event": "^5.1.0",
     "virtual-dom": "^2.1.1",
-    "virtual-hyperscript": "^4.6.0",
-    "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.0"
+    "virtual-hyperscript": "^4.6.0"
   }
 }
