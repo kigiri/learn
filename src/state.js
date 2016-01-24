@@ -8,7 +8,9 @@ function incrementCount(state) {}
 const globalState = {
   observ: buildState({
     split: observ(0.5),
+    codeMirror: observ(null),
     videoId: observ(''),
+    videoDisplay: observ('normal'),
     _hotVersion: observ(0),
     viewHeight: event.viewHeight,
     viewWidth: event.viewWidth,

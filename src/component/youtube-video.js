@@ -1,9 +1,10 @@
-const is = require('lib/is');
-const each = require('lib/each');
-const globalState = require('state');
-const cuid = require('cuid');
-const document = require('global/document');
-const renderIframe = require('layout/youtube-iframe');
+const is = require('lib/is')
+const each = require('lib/each')
+const globalState = require('state')
+const cuid = require('cuid')
+const document = require('global/document')
+const renderIframe = require('layout/youtube-iframe')
+const videoDisplay = globalState.observ.videoDisplay
 
 // https://developers.google.com/youtube/js_api_reference
 const YouTubeApiMethods = [
@@ -50,62 +51,60 @@ const YouTubeApiMethods = [
   'setVolume',
   'stopVideo',
   'unMute',
-];
+]
 
 const video = () => {
-  const id = cuid();
-  let iframe;
-  let virtualIframe;
-  let videoId = -1;
+  const id = cuid()
+  let iframe
+  let virtualIframe
+  let videoId = -1
 
   const ytApi = (func, args) => {
-    if (!iframe) return;
-    iframe.postMessage(JSON.stringify({
+    iframe = document.getElementById(id)
+    if (!iframe) return
+    iframe.contentWindow.postMessage(wesh(JSON.stringify({
       event: 'command',
       func,
       args: args || '',
-    }),'*');
+    })),'*')
   }
+
+  videoDisplay(val => {
+    if (val === 'hide') {
+      render.pauseVideo()
+    }
+  })
 
   const load = hash => {
     globalState.afterNextRender(() =>
-      render.cueVideoById(hash));
+      render.cueVideoById(hash))
   }
-
-  const findIframe = () => {
-    globalState.afterNextRender(() => {
-      const elem = document.getElementById(id);
-      if (!elem) return;
-
-      iframe = elem.contentWindow;
-    });
-  } 
 
   const render = props => {
     if (is.str(props)) {
-      props = { hash: props };
+      props = { hash: props }
     }
-    if (!iframe) {
-      findIframe();
-    } else if (props.hash && props.hash !== videoId) {
-      load(props.hash);
+    if (props.hash && props.hash !== videoId) {
+      load(props.hash)
     }
 
     if (props.hash) {
-      videoId = props.hash;
+      videoId = props.hash
       if (!virtualIframe) {
-        props.id = id;
-        virtualIframe = renderIframe(props);
+        props.id = id
+        virtualIframe = renderIframe(props)
       }
     }
-
-    return renderIframe.wrapper(virtualIframe);
+    return renderIframe.wrapper(virtualIframe)
   }
 
   each(YouTubeApiMethods, method =>
     render[method] = (...args) => ytApi(method, args))
 
-  return render;
+  window.ytv = render
+  window.state = globalState.observ
+
+  return render
 }
 
-module.exports = video;
+module.exports = video
