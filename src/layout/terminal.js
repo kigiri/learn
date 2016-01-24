@@ -1,4 +1,4 @@
-const h = require('lib/h')
+const h = require('lib/h');
 const videoDisplay = require('state').observ.videoDisplay
 
 require('./terminal.css');
@@ -45,8 +45,10 @@ const menu = h('div.pure-menu.pure-menu-horizontal', {
 ]))
 
 module.exports = (props, children) => wrapper({
-  style: { paddingTop: videoDisplay() === 'hide' ? 0 : props.width / ratio },
-}, form(children))
+  style: {
+    paddingTop: videoDisplay() === 'hide' ? 0 : props.width / ratio,
+  },
+  'ev-click': props.select,
 }, [
   menu,
   form(children),
