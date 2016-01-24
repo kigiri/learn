@@ -7,8 +7,6 @@ const matchUpperLetters = /[A-Z]/g;
 const kebab = str => str.replace(matchUpperLetters, dashMatch);
 const purify = key => 'pure-'+ kebab(key);
 
-require('./pure.css');
-
 const addClass = (className, args) => {
   if (args.props.className) {
     args.props.className = className +' '+ args.props.className;
