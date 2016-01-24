@@ -21,4 +21,4 @@ const form = h.curry('form.pure-form', {
 
 module.exports = (props, children) => wrapper({
   paddingTop: props.width / ratio,
-}, log(form(children)))
+}, form(children))

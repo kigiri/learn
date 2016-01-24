@@ -3,6 +3,7 @@ const app = require('lib/app');
 const state = require('./state');
 
 require('style/spinner.css');
+require('style/pure.css');
 
 module.exports = render => {
   document.getElementById('app').remove();
