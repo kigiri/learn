@@ -56,8 +56,7 @@ const config = {
   resolve: {
     root: path.join(__dirname, 'src')
   },
-  output: {
-  },
+  output: {},
   context: __dirname
 }
 
