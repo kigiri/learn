@@ -17,7 +17,7 @@ var features = {
 var unsupported = [];
 
 Object.keys(features).forEach(function (key) {
-  try { eval(features[key]) }
+  try { eval(features[key]) } // eslint-disable-line
   catch (err) { unsupported.push(key) }
 })
 

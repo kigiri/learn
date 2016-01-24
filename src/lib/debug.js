@@ -90,7 +90,7 @@ const getLogger = (key, opts, setOpts) => {
   return logger;
 };
 
-module.exports = opts  => {
+module.exports = opts => {
   const setOpts = applyOpts(opts);
   const log = store(['log', 'warn', 'error', 'trace', 'dir'], (s, key) =>
     s[key] = getLogger(key, opts, setOpts), getLogger('log', opts, setOpts));
@@ -98,8 +98,8 @@ module.exports = opts  => {
   log.debug = console.log.bind(console);
 
   if (window) {
-    window.log = log;
+    window.wesh = log;
   } else {
-    global.log = log;
+    global.wesh = log;
   }
 }

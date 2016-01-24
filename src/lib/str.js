@@ -1,5 +1,6 @@
+const map = require('lib/map');
+
 // str utils
-const map = require('lib/map')
 const firstLetter = /^./;
 const charFollowingDelimitors = /([-_. ]+.)/
 const consecutiveSpaces = /\s\s/;

@@ -7,7 +7,6 @@ const originLen = document.location.origin.length;
 const atom = observ(String(document.location.href).slice(originLen));
 const view = observ(() => {});
 
-window.observ = observ;
 let inPopState = false;
 
 const popstate = () => source(broadcast => window.addEventListener('popstate',

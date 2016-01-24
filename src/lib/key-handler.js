@@ -56,7 +56,7 @@ const applyMod = (ev, prev, fn) => fn
 
 module.exports = (handlers, fallback) => ev => {
   let fn = handlers[ev.alias = getAlias(ev, ev.which)] || handlers[ev.which];
-  log(ev.alias)
+  wesh(ev.alias)
   if (!fn && fallback) {
     return fallback(ev)
   }
