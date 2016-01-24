@@ -1,1 +1,0 @@
-webpackJsonp([1],{38:function(o,e,n){"use strict";var t=n(2);t.str("home")&&console.log("homeies"),o.exports={load:function(o){o.videoId.set("XEmnw7IxkSY")},render:function(o){return"yo"}}}});
