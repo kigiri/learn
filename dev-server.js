@@ -77,7 +77,7 @@ getAssets().then(assets => {
           loader: 'strict'
         },
         {
-          test: /(\/route\/.+\/|\.async\.js$)/,
+          test: /((\\|\/)route\2.+\2|\.async\.js$)/,
           exclude: nodeModules,
           loader: "promise?global!",
         },
