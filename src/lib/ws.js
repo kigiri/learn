@@ -6,6 +6,7 @@ const often = require('lib/loop').often
 const bakelog = msg => (...args) => (console.log(msg, ...args), args[0]) // TODO: add stack
 const log = (...args) => (console.log(...args), args[0])
 const typeList = [
+  'handshake',
   'data',
   'msg',
 ]
@@ -28,7 +29,6 @@ const addType = type => {
 }
 
 const onerror = console.error.bind(console)
-const onclose = ev => connected = false
 const onmessage = ev => {
   const data = ev.data
   recieve.broadcast(ev)
@@ -39,22 +39,28 @@ const onmessage = ev => {
   const reciever = recieve[type]
   if (!reciever) return
 
-  reciever.broadcast(data.slice(pos + 1))
+  try {
+    reciever.broadcast(JSON.parse(data.slice(pos + 1)))
+  } catch (e) {
+    console.log('error while parsing WebSocket message:', data, e)
+  }
 }
 
-let connected = false
-const connect = () => {
+const connect = (connected => () => {
   if (connected) return
+  const clear = send.listen(content => ws.send(content))
   const ws = new WebSocket("ws://learn.cdenis.net:7266/")
   ws.onopen = ev => {
-    connected = true
-    ws.send(id)
+    ws.send('handshake:'+ id)
   }
   ws.onerror = onerror
-  ws.onclose = onclose
+  ws.onclose = ev => {
+    clear()
+    connected = false
+  }
   ws.onmessage = onmessage
-  send.listen(content => ws.send(content))
-}
+  connected = true
+})(false)
 
 often(connect)
 

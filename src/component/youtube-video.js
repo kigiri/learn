@@ -53,58 +53,54 @@ const YouTubeApiMethods = [
   'unMute',
 ]
 
-const video = () => {
-  const id = cuid()
-  let iframe
-  let virtualIframe
-  let videoId = -1
+const id = cuid()
+let iframe
+let virtualIframe
+let videoId = -1
 
-  const ytApi = (func, args) => {
-    iframe = document.getElementById(id)
-    if (!iframe) return
-    iframe.contentWindow.postMessage(wesh(JSON.stringify({
-      event: 'command',
-      func,
-      args: args || '',
-    })),'*')
-  }
-
-  videoDisplay(val => {
-    if (val === 'hide') {
-      render.pauseVideo()
-    }
-  })
-
-  const load = hash => {
-    globalState.afterNextRender(() =>
-      render.cueVideoById(hash))
-  }
-
-  const render = props => {
-    if (is.str(props)) {
-      props = { hash: props }
-    }
-    if (props.hash && props.hash !== videoId) {
-      load(props.hash)
-    }
-
-    if (props.hash) {
-      videoId = props.hash
-      if (!virtualIframe) {
-        props.id = id
-        virtualIframe = renderIframe(props)
-      }
-    }
-    return renderIframe.wrapper(virtualIframe)
-  }
-
-  each(YouTubeApiMethods, method =>
-    render[method] = (...args) => ytApi(method, args))
-
-  window.ytv = render
-  window.state = globalState.observ
-
-  return render
+const ytApi = (func, args) => {
+  iframe = document.getElementById(id)
+  if (!iframe) return
+  iframe.contentWindow.postMessage(wesh(JSON.stringify({
+    event: 'command',
+    func,
+    args: args || '',
+  })),'*')
 }
 
-module.exports = video
+videoDisplay(val => {
+  if (val === 'hide') {
+    render.pauseVideo()
+  }
+})
+
+const load = hash => {
+  globalState.afterNextRender(() =>
+    render.cueVideoById(hash))
+}
+
+const render = props => {
+  if (is.str(props)) {
+    props = { hash: props }
+  }
+  if (props.hash && props.hash !== videoId) {
+    load(props.hash)
+  }
+
+  if (props.hash) {
+    videoId = props.hash
+    if (!virtualIframe) {
+      props.id = id
+      virtualIframe = renderIframe(props)
+    }
+  }
+  return renderIframe.wrapper(virtualIframe)
+}
+
+each(YouTubeApiMethods, method =>
+  render[method] = (...args) => ytApi(method, args))
+
+window.ytv = render
+window.state = globalState.observ
+
+module.exports = render

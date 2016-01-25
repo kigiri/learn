@@ -125,9 +125,11 @@ function parseCurryArgs(args, props, children) {
       if (props.className && args.props.className) {
         props.className = props.className +' '+ args.className;
       }
-      args.props = assign({}, args.props, props);
+      args.props = assign(assign({}, args.props), props);
     }
   }
+  if (args.props.className === "teminal-message")
+    console.log(args.props.style)
   return args;
 }
 

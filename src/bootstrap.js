@@ -1,5 +1,4 @@
 const document = require('global/document')
-const ws = require('lib/ws')
 const app = require('lib/app')
 const state = require('./state')
 

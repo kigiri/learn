@@ -9,6 +9,7 @@ const globalState = {
   observ: buildState({
     split: observ(0.5),
     codeMirror: observ(null),
+    messagesCount: observ(0),
     videoId: observ(''),
     videoDisplay: observ('normal'),
     _hotVersion: observ(0),

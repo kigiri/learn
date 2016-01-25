@@ -21,33 +21,44 @@
 
 */
 
+const validator = (message, bool) => valid => {
+  if (valid !== bool) {
+    throw new Error(message +" FAILED !")
+  }
+  return message +" PASSED !"
+}
 
-// user.name must be a string
-typeof user.name === 'string'
+const is = message => validator(message, true)
+is.not = message => validator(message, false)
 
-// user.name must be longueur than 3
-user.name.length > 3
+const does = is
 
-// user.name must contains only alphanumeric characters or _, -, . separators
-/^[A-Za-z0-9_.-]+$/.test(user.name)
+is("user.name a string")
+  (typeof user.name === 'string')
 
-// user.name can not start with a separator
-!/^[_.-]/.test(user.name)
+is("user.name longer than 3")
+  (user.name.length > 3)
 
-// user.name can not end with a separator
-!/[_.-]$/.test(user.name)
+is("user.name only alphanumeric characters or _, -, . separators")
+  (/^[A-Za-z0-9_.-]+$/.test(user.name))
 
-// user.name can not have consecutive separators
-!/[_.-]{2}/.test(user.name)
+does.not("user.name start with a separator")
+  (/^[_.-]/.test(user.name))
 
-// user.password must be a string
-typeof user.password === 'string'
+does.not("user.name end with a separator")
+  (/[_.-]$/.test(user.name))
 
-// user.password must be longueur than 3
-user.password.length > 6
+does.not("user.name have consecutive separators")
+  (/[_.-]{2}/.test(user.name))
 
-// user.password must have at least a letter
-/[A-Za-z]/.test(user.password)
+is("user.password a string")
+  (typeof user.password === 'string')
 
-// user.password must have at least a number
-/[0-9]/.test(user.password)
+is("user.password longer than 3")
+  (user.password.length > 6)
+
+does("user.password have at least a letter")
+  (/[A-Za-z]/.test(user.password))
+
+does("user.password have at least a number")
+  (/[0-9]/.test(user.password))

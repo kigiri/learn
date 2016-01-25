@@ -1,11 +1,12 @@
 const h = require('lib/h');
 const videoDisplay = require('state').observ.videoDisplay
+const prepend = require('lib/prepend')
 
 require('./terminal.css');
 
 const ratio = 16 / 9;
 
-const wrapper = h.curry('div.terminal-layout', {
+const wrapper = h.curry('.terminal-layout', {
   style: {
     position: 'absolute',
     top: 0,
@@ -32,13 +33,8 @@ const button = label => h('li.video-button.pure-button.pure-button-primary', {
     : videoDisplay.set(label)
 }, label)
 
-const menu = h('div.pure-menu.pure-menu-horizontal', {
-  style: {
-    position: 'absolute',
-    letterSpacing: '0.01em',
-    background: 'transparent',
-    textAlign: 'right',
-  }
+const menu = h('#video-menu.pure-menu.pure-menu-horizontal', {
+
 }, videoMenu([
   button('fullscreen'),
   button('hide'),
@@ -49,7 +45,4 @@ module.exports = (props, children) => wrapper({
     paddingTop: videoDisplay() === 'hide' ? 0 : props.width / ratio,
   },
   'ev-click': props.select,
-}, [
-  menu,
-  form(children),
-])
+}, prepend(children, menu))
