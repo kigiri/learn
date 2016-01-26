@@ -30,17 +30,17 @@ const render = state => {
   if (state.codeMirror && !loaded) {
     loaded = true
     window.cm = cm = state.codeMirror(document.getElementById('editor'), {
-      lineNumbers: true,
       theme: 'dracula',
       tabSize: 2,
+      autofocus: true,
+      lineNumbers: true,
       scrollPastEnd: true,
+      scrollbarStyle: 'null',
+      inputStyle: 'contenteditable',
+      rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
+      keyMap: 'sublime',
       value: "function myScript() { return 100 }\n",
       mode: "javascript",
-      inputStyle: 'contenteditable',
-      scrollbarStyle: 'null',
-      keyMap: 'sublime',
-      rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
-      autofocus: true,
     })
     cm.on('change', evalChanges)
   }

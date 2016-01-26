@@ -1,7 +1,9 @@
 const layout = require('layout/terminal-input')
 const handler = require('lib/key-handler')
+const history = require('lib/history')
 const linker = require('lib/dom-linker')
 const observ = require('observ')
+const event = require('geval/event')
 const caret = require('lib/caret')
 const each = require('lib/each')
 const focusedElem = require('lib/event').focus
@@ -24,6 +26,7 @@ const input = linker('input#terminal-input.pure-input-1', {
 
 const lastChar = observ('')
 const inputValue = observ('')
+const afterCommandEvent = event()
 
 lastChar(c => {
   if (c === '(') {
@@ -62,10 +65,18 @@ const expandSelection = () => {
 }
 
 const commands = {
-  clear: display.clear
+  clear: display.clear,
+  clearInput: ev => {
+    const el = ev.target;
+    if (el.selectionStart === el.selectionEnd) {
+      el.value = ''
+    }
+    return false
+  },
 }
 
 const execCommand = (key, ...args) => {
+  console.log(...args)
   const cmd = commands[key]
   if (cmd) {
     return cmd(...args)
@@ -78,21 +89,50 @@ const execError = (el, error, ...args) => {
   el.select()
 }
 
+const isCommand = val => val[0] === '/'
+const commandHistory = history(50)
+
+;(idx => {
+  const historyStore = commandHistory.get();
+  const retrieveCommand = (el, dir) => {
+    if (idx === -1) {
+      commandHistory.stash(el.value)
+    }
+    idx =  Math.min( Math.max(idx + dir, -1), historyStore.length - 1)
+    el.value = idx < 0 ? commandHistory.stash() : historyStore[idx]
+  }
+
+  commands.getPrevCommand = ev => retrieveCommand(ev.target, -1)
+  commands.getNextCommand = ev => retrieveCommand(ev.target, +1)
+
+  afterCommandEvent.listen(cmd => {
+    if (cmd !== commands.getNextCommand && cmd !== commands.getPrevCommand) {
+      idx = -1
+    }
+  })
+})(-1)
+
+
 const keydown = handler({
   D: {
     meta: expandSelection,
     ctrl: expandSelection,
   },
-  L: {
-    ctrl: display.clear
-  },
+  L: { ctrl: commands.clear },
+  C: { ctrl: commands.clearInput },
+  up: commands.getNextCommand,
+  down: commands.getPrevCommand,
   enter: {
     none: ev => {
       const el = input.elem()
       const val = el.value
-      if (/^\//.test(val)) {
-        const error = execCommand(val.slice(1).split(' '))
-        if (error) return execError(el, error)
+      if (isCommand(val)) {
+        const error = execCommand(val.slice(1).split(' ').filter(Boolean), ev)
+        if (error) {
+          return execError(el, error)
+        } else {
+          commandHistory.push(val)
+        }
       } else {
         if (val.length > 255) return execError(el, 'tooLong')
         ws.send.msg(val)
@@ -103,7 +143,7 @@ const keydown = handler({
       // should add a line break, but for that we need textarea instead of input
     }
   },
-}, ev => (setTimeout(() => fallback(ev), false)))
+}, ev => (setTimeout(() => fallback(ev), false)), afterCommandEvent.broadcast)
 
 const select = () => {
   const el = input.elem()

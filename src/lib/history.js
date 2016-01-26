@@ -12,10 +12,11 @@ module.exports = limit => {
 
   return {
     get: () => history,
+    stash: (val => arg => arg ? val = arg : val)(),
     remove: el => removeFromHistory(history, el),
     push: el => {
       removeFromHistory(history, el)
-      history.push(el)
+      history.unshift(el)
       while (history.length > limit) {
         history.shift()
       }
