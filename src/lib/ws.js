@@ -3,8 +3,6 @@ const window = require('global/window')
 const ev = require('geval/event')
 const is = require('lib/is')
 const often = require('lib/loop').often
-const bakelog = msg => (...args) => (console.log(msg, ...args), args[0]) // TODO: add stack
-const log = (...args) => (console.log(...args), args[0])
 const typeList = [
   'handshake',
   'data',
@@ -42,7 +40,7 @@ const onmessage = ev => {
   try {
     reciever.broadcast(JSON.parse(data.slice(pos + 1)))
   } catch (e) {
-    console.log('error while parsing WebSocket message:', data, e)
+    wesh('error while parsing WebSocket message:', data, e)
   }
 }
 
