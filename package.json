@@ -16,6 +16,7 @@
     "ftps-promise": "^0.1.0",
     "geval": "^2.1.1",
     "github": "^0.2.4",
+    "global": "^4.3.0",
     "html-webpack-plugin": "^2.7.2",
     "jade": "^1.11.0",
     "lodash": "^4.0.1",
