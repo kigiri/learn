@@ -1,15 +1,15 @@
-const is = require('lib/is');
-const each = require('lib/each');
-const assign = require('lib/assign-deep');
+const is = require('lib/is')
+const each = require('lib/each')
+const assign = require('lib/assign-deep')
 
-const VNode = require('virtual-dom/vnode/vnode');
-const VText = require('virtual-dom/vnode/vtext');
+const VNode = require('virtual-dom/vnode/vnode')
+const VText = require('virtual-dom/vnode/vtext')
 
-const parseTag = require('virtual-dom/virtual-hyperscript/parse-tag');
-const softSetHook = require('virtual-dom/virtual-hyperscript/hooks/soft-set-hook');
-const evHook = require('virtual-dom/virtual-hyperscript/hooks/ev-hook');
+const parseTag = require('virtual-dom/virtual-hyperscript/parse-tag')
+const softSetHook = require('virtual-dom/virtual-hyperscript/hooks/soft-set-hook')
+const evHook = require('virtual-dom/virtual-hyperscript/hooks/ev-hook')
 
-const pixelize = require('lib/default-unit');
+const pixelize = require('lib/default-unit')
 
 const transformProperties = (value, propName, props) => {
   if (!is.hook(value) && /^ev[-A-Z]/.test(propName)) {
@@ -28,23 +28,23 @@ function parseArgs(cssPath, props, children) {
 
   if (props) {
     if (props.key) {
-      parsedArgs.key = props.key;
-      props.key = undefined;
+      parsedArgs.key = props.key
+      props.key = undefined
     }
 
     if (props.namespace) {
-      parsedArgs.namespace = props.namespace;
-      props.namespace = undefined;
+      parsedArgs.namespace = props.namespace
+      props.namespace = undefined
     } else if (isInputWithValue(cssPath, props)) {
-      props.value = softSetHook(props.value);
+      props.value = softSetHook(props.value)
     }
   } else {
     props = {}
   }
-  parsedArgs.tag = parseTag(cssPath, props);
-  parsedArgs.props = props;
+  parsedArgs.tag = parseTag(cssPath, props)
+  parsedArgs.props = props
 
-  return parsedArgs;
+  return parsedArgs
 }
 
 const isInputWithValue = (tag, props) => tag === 'INPUT'
@@ -53,29 +53,29 @@ const isInputWithValue = (tag, props) => tag === 'INPUT'
   && !is.hook(props.value)
 
 function buildVnode(tag, props, children, key, namespace) {
-  const childNodes = [];
+  const childNodes = []
 
   if (props.style) {
-    pixelize(props.style);
+    pixelize(props.style)
   }
 
-  each(props, transformProperties);
-  addChild(children, childNodes, tag, props);
+  each(props, transformProperties)
+  addChild(children, childNodes, tag, props)
 
-  return new VNode(tag, props, childNodes, key, namespace);
+  return new VNode(tag, props, childNodes, key, namespace)
 }
 
 function addChild(c, childNodes, tag, props) {
-  if (c === undefined || c === null) return;
+  if (c === undefined || c === null) return
   if (is.str(c)) {
-    childNodes.push(new VText(c));
+    childNodes.push(new VText(c))
   } else if (typeof c === 'number') {
-    childNodes.push(new VText(String(c)));
+    childNodes.push(new VText(String(c)))
   } else if (is.child(c)) {
-    childNodes.push(c);
+    childNodes.push(c)
   } else if (is.arr(c)) {
-    for (var i = 0; i < c.length; i++) {
-      addChild(c[i], childNodes, tag, props);
+    for (let child of c) {
+      addChild(child, childNodes, tag, props)
     }
   } else {
     throw UnexpectedVirtualElement({
@@ -84,69 +84,63 @@ function addChild(c, childNodes, tag, props) {
         tagName: tag,
         properties: props
       }
-    });
+    })
   }
 }
 
 function UnexpectedVirtualElement(data) {
-  var err = new Error();
+  const err = new Error('Unexpected virtual child passed to h().\n'
+    +'Expected a VNode / Vthunk / VWidget / string but:\n'
+    +'got:\n'+ errorString(data.foreignObject) +'.\n'
+    +'The parent vnode is:\n'+ errorString(data.parentVnode) +'\n'
+    +'Suggested fix: change your `h(..., [ ... ])` callsite.')
 
-  err.type = 'virtual-hyperscript.unexpected.virtual-element';
-  err.message = 'Unexpected virtual child passed to h().\n' +
-    'Expected a VNode / Vthunk / VWidget / string but:\n' +
-    'got:\n' +
-    errorString(data.foreignObject) +
-    '.\n' +
-    'The parent vnode is:\n' +
-    errorString(data.parentVnode)
-    '\n' +
-    'Suggested fix: change your `h(..., [ ... ])` callsite.';
-  err.foreignObject = data.foreignObject;
-  err.parentVnode = data.parentVnode;
+  err.type = 'virtual-hyperscript.unexpected.virtual-element'
+  err.foreignObject = data.foreignObject
+  err.parentVnode = data.parentVnode
 
-  return err;
+  return err
 }
 
 function errorString(obj) {
   try {
-    return JSON.stringify(obj, null, '    ');
+    return JSON.stringify(obj, null, '    ')
   } catch (e) {
-    return String(obj);
+    return String(obj)
   }
 }
 
 function parseCurryArgs(args, props, children) {
   if (!children && is.children(props)) {
-    args.children = props;
+    args.children = props
   } else {
-    args.children = children;
+    args.children = children
     if (props) {
       if (props.className && args.props.className) {
-        props.className = props.className +' '+ args.className;
+        props.className = props.className +' '+ args.className
       }
-      args.props = assign({}, args.props, props);
+      args.props = assign({}, args.props, props)
     }
   }
-  return args;
+  return args
 }
 
 const applyArgsToBuild = arg =>
-  buildVnode(arg.tag, arg.props, arg.children, arg.key, arg.namespace);
+  buildVnode(arg.tag, arg.props, arg.children, arg.key, arg.namespace)
 
-function h(tagName, properties, children) {
-  return applyArgsToBuild(parseArgs(tagName, properties, children));
-}
+const h = (tagName, properties, children) =>
+  applyArgsToBuild(parseArgs(tagName, properties, children))
 
-h.build = buildVnode;
+h.build = buildVnode
 h.curry = (tagName, properties) => (args => {
   const props = args.props || {}
   const tag = args.tag
   const curryfied = (newProps, children) => 
-    applyArgsToBuild(parseCurryArgs({ tag, props }, newProps, children));
+    applyArgsToBuild(parseCurryArgs({ tag, props }, newProps, children))
 
-  curryfied.style = (style, children) => curryfied({ style }, children);
+  curryfied.style = (style, children) => curryfied({ style }, children)
 
-  return curryfied;
-})(parseArgs(tagName, properties));
+  return curryfied
+})(parseArgs(tagName, properties))
 
-module.exports = h;
+module.exports = h
