@@ -1,7 +1,6 @@
 const is = require('lib/is');
 const each = require('lib/each');
 const assign = require('lib/assign-deep');
-const defaults = require('lib/defaults');
 
 const VNode = require('virtual-dom/vnode/vnode');
 const VText = require('virtual-dom/vnode/vtext');
@@ -125,11 +124,9 @@ function parseCurryArgs(args, props, children) {
       if (props.className && args.props.className) {
         props.className = props.className +' '+ args.className;
       }
-      args.props = assign(assign({}, args.props), props);
+      args.props = assign({}, args.props, props);
     }
   }
-  if (args.props.className === "teminal-message")
-    console.log(args.props.style)
   return args;
 }
 
@@ -142,9 +139,9 @@ function h(tagName, properties, children) {
 
 h.build = buildVnode;
 h.curry = (tagName, properties) => (args => {
-  args.props || (args.props = {})
-  const curryfied = (props, children) => 
-    applyArgsToBuild(parseCurryArgs(args, props, children));
+  const props = args.props || {}
+  const curryfied = (newProps, children) => 
+    applyArgsToBuild(parseCurryArgs({ props }, newProps, children));
 
   curryfied.style = (style, children) => curryfied({ style }, children);
 
