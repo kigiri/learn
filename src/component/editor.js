@@ -5,6 +5,8 @@ const once = require('lib/once')
 const keyDown = require('lib/event')
 const display = require('component/terminal-display')
 const debounce = require('lib/debounce')
+const moulint = require('helper/moulinette-linter')
+
 
 require('lib/code-mirror')
 require('style/code-mirror.css')
@@ -40,9 +42,13 @@ const render = state => {
       rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
       keyMap: 'sublime',
       value: "function myScript() { return 100 }\n",
+      lintOnChange: false,
+      gutters: ["CodeMirror-lint-markers"],
+      lint: true,
       mode: "javascript",
     })
     cm.on('change', evalChanges)
+    state.codeMirror.registerHelper("lint", "javascript", moulint)
   }
   return editor
 }
