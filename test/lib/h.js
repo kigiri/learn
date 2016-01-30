@@ -25,4 +25,7 @@ module.exports = (test, h) => {
 
   test.equal('h curry should keep consistent defaults properties')
     (fromCurry2.properties.id, 'cacao')
+
+  test.equal('h defaults tag should be div')
+    (fromCurry2.tagName, 'DIV')
 }

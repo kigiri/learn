@@ -140,8 +140,9 @@ function h(tagName, properties, children) {
 h.build = buildVnode;
 h.curry = (tagName, properties) => (args => {
   const props = args.props || {}
+  const tag = args.tag
   const curryfied = (newProps, children) => 
-    applyArgsToBuild(parseCurryArgs({ props }, newProps, children));
+    applyArgsToBuild(parseCurryArgs({ tag, props }, newProps, children));
 
   curryfied.style = (style, children) => curryfied({ style }, children);
 
