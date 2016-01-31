@@ -21,18 +21,6 @@
 
 */
 
-const validator = (message, bool) => valid => {
-  if (valid !== bool) {
-    throw new Error(message +" FAILED !")
-  }
-  return message +" PASSED !"
-}
-
-const is = message => validator(message, true)
-is.not = message => validator(message, false)
-
-const does = is
-
 is("user.name a string")
   (typeof user.name === 'string')
 

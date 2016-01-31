@@ -1,12 +1,8 @@
 const h = require('lib/h')
 const each = require('lib/each')
-const loop = require('lib/loop').often
-const once = require('lib/once')
 const keyDown = require('lib/event')
 const display = require('component/terminal-display')
-const debounce = require('lib/debounce')
-const moulint = require('helper/moulinette-linter')
-
+const ev = require('geval/event')
 
 require('lib/code-mirror')
 require('style/code-mirror.css')
@@ -17,21 +13,20 @@ function cleanup() {
 }
 
 cleanup() // fix hot reload
-let cm
 let loaded = false
 const editor = h('div#editor')
-const evalChanges = debounce(once(loop, () => {
-  try {
-    display.log(eval(cm.getValue()))
-  } catch (err) {
-    display.error(err.message)
-  }
-}), 1000)
+
+const evalEvent = ev()
+
+const evalCode = (text, cb, opts, cm) => {
+  evalEvent.broadcast({ text, cb, cm })
+  return []
+}
 
 const render = state => {
   if (state.codeMirror && !loaded) {
     loaded = true
-    window.cm = cm = state.codeMirror(document.getElementById('editor'), {
+    state.codeMirror(document.getElementById('editor'), {
       theme: 'dracula',
       tabSize: 2,
       autofocus: true,
@@ -41,16 +36,19 @@ const render = state => {
       inputStyle: 'contenteditable',
       rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
       keyMap: 'sublime',
-      value: "function myScript() { return 100 }\n",
-      lintOnChange: false,
+      value: "const user = {\n   /* set your user name and password */\n}\n",
+      lintOnChange: true,
+      lint: {
+        getAnnotations: evalCode,
+        async: true,
+      },
       gutters: ["CodeMirror-lint-markers"],
-      lint: true,
       mode: "javascript",
     })
-    cm.on('change', evalChanges)
-    state.codeMirror.registerHelper("lint", "javascript", moulint)
   }
   return editor
 }
+
+render.eval = evalEvent.listen
 
 module.exports = render

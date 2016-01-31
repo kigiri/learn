@@ -2,7 +2,7 @@ const path = require('path');
 const jade = require('jade');
 const pathJoin = path.join;
 const getAssets = require('./assets');
-const nodeModules = path.join(__dirname, 'node_modules');
+const nodeModules = pathJoin(__dirname, 'node_modules');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -29,13 +29,17 @@ const config = {
     loaders: [
       {
         test: /\.js$/,
-        exclude: nodeModules,
+        exclude: [ nodeModules, pathJoin(__dirname, 'src/sloppy') ],
         loader: 'strict'
       },
       {
         test: /((\\|\/)route\2.+\2|\.async\.js$)/,
         exclude: nodeModules,
         loader: "promise?global!",
+      },
+      {
+        test: /(\\|\/)sauce\1/,
+        loader: 'raw',
       },
       { test: /\.css$/, loader: "style-loader!css-loader?minimize!postcss-loader" },
     ]

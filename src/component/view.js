@@ -1,4 +1,5 @@
 const video = require('component/youtube-video')
+const moulinette = require('component/moulinette')
 const terminal = require('component/terminal')
 const editor = require('component/editor')
 const menu = require('layout/menu')
@@ -10,7 +11,8 @@ const flex = { style: { flex: 1 } }
 module.exports = state => container([
   side.left(state, editor(state)),
   side.right(state, [
-    terminal(state),
-    video(state.videoId),
+    moulinette(state),
+    // terminal(state),
+    // video(state.videoId),
   ]),
 ])

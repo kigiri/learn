@@ -3,6 +3,51 @@
   height: 100%!important
 }
 
+.CodeMirror-lint-marker-error::after {
+  content: 'X';
+  padding-right: 9px;
+  display: block;
+}
+
 #editor {
   height: 100%
+}
+
+/* The lint marker gutter */
+.CodeMirror-lint-markers {
+  width: 0px;
+}
+
+.CodeMirror-lint-mark-error,
+.CodeMirror-lint-tooltip,
+.CodeMirror-lint-marker-error {
+  background: #601F40;
+  color: #ff79c6;
+  font-family: monospace;
+  font-size: 15px;
+}
+
+.CodeMirror-lint-tooltip {
+  border-radius: 4px;
+  border: 1px solid #1C1D26;
+  box-shadow: 0 0 5px 5px #232530;
+  max-width: 600px;
+  opacity: 0;
+  overflow: hidden;
+  padding: 2px 5px;
+  position: fixed;
+  transition: opacity .4s;
+  white-space: pre-wrap;
+  z-index: 100;
+}
+
+.CodeMirror-lint-marker-error, .CodeMirror-lint-marker-warning {
+  cursor: pointer;
+  display: inline-block;
+  height: 18px;
+  text-align: right;
+  margin-top: -1px;
+  position: relative;
+  vertical-align: middle;
+  width: 30px;
 }
