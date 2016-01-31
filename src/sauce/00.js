@@ -1,52 +1,29 @@
-/*
-     __                 _         _       __                      
-    / /  __ _ _ __ ___ | |__   __| | __ _/ _\ __ _ _   _  ___ ___ 
-   / /  / _` | '_ ` _ \| '_ \ / _` |/ _` \ \ / _` | | | |/ __/ _ \
-  / /__| (_| | | | | | | |_) | (_| | (_| |\ \ (_| | |_| | (_|  __/
-  \____/\__,_|_| |_| |_|_.__/ \__,_|\__,_\__/\__,_|\__,_|\___\___|
+// user.name must be a string
+isTrue(typeof user.name === 'string')
 
-           .--,--.
-           `.  ,.'
-            |___|
-            :o o:   O    Are you ready for cookin' ?
-           _`~^~'_  |    
-         /'   ^   `\=)
-       .'  _______ '~|
-       `(<=|     |= /'
-           |     |
-           |_____|
-    ~~~~~~~ ===== ~~~~~~~~
+// user.name must be longer than 3
+isTrue(user.name.length > 3)
 
+// user.name must contain only alphanumeric characters or _, -, . separators
+isTrue(/^[A-Za-z0-9_.-]+$/.test(user.name))
 
+// user.name must not start with a separator
+isFalse(/^[_.-]/.test(user.name))
 
-*/
+// user.name must not end with a separator
+isFalse(/[_.-]$/.test(user.name))
 
-is("user.name a string")
-  (typeof user.name === 'string')
+// user.name must not have consecutive separators
+isFalse(/[_.-]{2}/.test(user.name))
 
-is("user.name longer than 3")
-  (user.name.length > 3)
+// user.password must be a string
+isTrue(typeof user.password === 'string')
 
-is("user.name only alphanumeric characters or _, -, . separators")
-  (/^[A-Za-z0-9_.-]+$/.test(user.name))
+// user.password must be longer than 6
+isTrue(user.password.length > 6)
 
-does.not("user.name start with a separator")
-  (/^[_.-]/.test(user.name))
+// user.password must have at least a letter
+isTrue(/[A-Za-z]/.test(user.password))
 
-does.not("user.name end with a separator")
-  (/[_.-]$/.test(user.name))
-
-does.not("user.name have consecutive separators")
-  (/[_.-]{2}/.test(user.name))
-
-is("user.password a string")
-  (typeof user.password === 'string')
-
-is("user.password longer than 3")
-  (user.password.length > 6)
-
-does("user.password have at least a letter")
-  (/[A-Za-z]/.test(user.password))
-
-does("user.password have at least a number")
-  (/[0-9]/.test(user.password))
+// user.password must have at least a number
+isTrue(/[0-9]/.test(user.password))

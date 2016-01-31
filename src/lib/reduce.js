@@ -1,4 +1,4 @@
-import { isInt } from './is'
+const isInt = require('lib/is').int
 
 function reduceObj(obj, fn, result) {
   const keys = Object.keys(obj);
@@ -23,7 +23,7 @@ function reduceIter(iter, fn, result) {
   return result;
 }
 
-export default (collection, fn, first) => {
+module.exports = (collection, fn, first) => {
   if (!collection) return collection
   return (isInt(collection.length) && collection.length > 0)
     ? reduceIter(collection, fn, first)

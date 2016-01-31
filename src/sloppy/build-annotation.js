@@ -1,41 +1,49 @@
+var count = require('lib/count')
 var moulinter = require('helper/moulinette-linter')
+var ev = require('geval/event')
 
-var validator = (message, bool) => valid => {
+var success = ev()
+
+var index = 0
+var validator = bool => valid => {
+  index++
   if (valid !== bool) {
-    throw new Error(message +" FAILED !")
+    throw new Error('test #'+ index +' failed :(')
   }
-  return message +" PASSED !"
 }
 
-var is = message => validator(message, true)
+var isTrue = validator(true)
+var isFalse = validator(false)
 
-is.not = message => validator(message, false)
-
-var does = is
 var defaultAnnotation = {
   message: 'failed to compile your code',
   from: { line: 0, ch: 0 },
   to: { line: 1, ch: 0 },
 }
 
-function buildAnnotation(userCode, editorCm, cb) {
-  return function getAnnotation(testCode, opts, testCm) {
-    var state = { is: is, does: does }
+const sauce = require('data/sauce')
 
+function buildAnnotation(userCode, editorCm, cb, apply) {
+  "use strict"
+  return function getAnnotation(testCode, opts, testCm) {
     try {
-      eval(userCode)
+      (function () { eval(userCode) })()
       cb([])
-      try {
-        eval(testCode)
-      } catch (err2) {
-        return moulinter(err2, testCode)
-      }
-    } catch (err) {
-      cb(moulinter(err, userCode))
+    } catch (err) {      
+      cb(apply(moulinter(err, userCode, 1)))
       return [ defaultAnnotation ]
     }
-    return []
+
+    try {
+      index = 0
+      success.broadcast(eval(userCode +'\n'+ testCode +'\n'+ sauce[0].postData))
+    } catch (err2) {
+      return apply(moulinter(err2, testCode, count(userCode, '\n') + 2))
+    }
+    return apply([])
   }
 }
+
+buildAnnotation.success = success.listen
 
 module.exports = buildAnnotation

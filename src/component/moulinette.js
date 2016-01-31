@@ -2,6 +2,10 @@ const h = require('lib/h')
 const test00 = require('sauce/00')
 const editor = require('component/editor')
 const buildAnnotation = require('sloppy/build-annotation')
+const cook = require('layout/the-cook')
+const greet = require('helper/greet')
+
+require('layout/moulinette.css')
 
 function cleanup() {
   const prevElem = document.getElementById('moulinette')
@@ -12,6 +16,21 @@ cleanup() // fix hot reload
 let loaded = false
 const moulinette = h('#moulinette')
 let clearEval = editor.eval(args => args.cb([]))
+const cookProps = {
+  eye: 'o',
+  message: greet(),
+}
+
+const applyCook = annotations => {
+  if (annotations.length) {
+    cookProps.eye = 'x'
+    cookProps.message = annotations[0].message
+  } else {
+    cookProps.eye = 'o'
+    cookProps.message = greet()
+  }
+  return annotations
+}
 
 const render = state => {
   if (state.codeMirror && !loaded) {
@@ -27,19 +46,18 @@ const render = state => {
       value: test00,
       lintOnChange: false,
       gutters: ["CodeMirror-lint-markers"],
-      lint: true,
+      lint: false,
       mode: "javascript",
-      lintWith: {
-        getAnnotations: () => []
-      }
     })
     clearEval()
     editor.eval(args => moulmoul.setOption("lint", {
-      getAnnotations: buildAnnotation(args.text, args.cm, args.cb)
+      getAnnotations: buildAnnotation(args.text, args.cm, args.cb, applyCook)
     }))
-    // setTimeout(render.eval, 10);
   }
-  return moulinette
+  return [
+    cook(cookProps),
+    moulinette,
+  ]
 }
 
 

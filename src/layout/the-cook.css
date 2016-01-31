@@ -1,0 +1,16 @@
+#the-cook {
+  white-space: pre;
+  font-family: monospace;
+  color: #6272a4;
+  padding-left: 24px;
+  margin-bottom: 15px;
+}
+
+#speach-bubble {
+  float: left;
+  position: absolute;
+}
+
+.eyes-36  { color: #6d8a88 }
+.eyes-111 { color: #8F9095 }
+.eyes-120 { color: #B45799 }

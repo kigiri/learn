@@ -26,7 +26,7 @@ const evalCode = (text, cb, opts, cm) => {
 const render = state => {
   if (state.codeMirror && !loaded) {
     loaded = true
-    state.codeMirror(document.getElementById('editor'), {
+    let cm = state.codeMirror(document.getElementById('editor'), {
       theme: 'dracula',
       tabSize: 2,
       autofocus: true,
@@ -37,14 +37,14 @@ const render = state => {
       rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
       keyMap: 'sublime',
       value: "const user = {\n   /* set your user name and password */\n}\n",
-      lintOnChange: true,
-      lint: {
-        getAnnotations: evalCode,
-        async: true,
-      },
+      // lintOnChange: true,
       gutters: ["CodeMirror-lint-markers"],
       mode: "javascript",
     })
+    setTimeout(() => cm.setOption("lint", {
+      getAnnotations: evalCode,
+      async: true
+    }), 10);
   }
   return editor
 }
