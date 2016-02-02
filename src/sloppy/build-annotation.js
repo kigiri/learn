@@ -1,8 +1,9 @@
-var count = require('lib/count')
 var moulinter = require('helper/moulinette-linter')
-var ev = require('geval/event')
+var observables = require('state').observ
+var sauce = observables.sauce
+var cookProps = observables.cookProps
+var count = require('lib/count')
 
-var success = ev()
 
 var index = 0
 var validator = bool => valid => {
@@ -21,29 +22,31 @@ var defaultAnnotation = {
   to: { line: 1, ch: 0 },
 }
 
-const sauce = require('data/sauce')
 
 function buildAnnotation(userCode, editorCm, cb, apply) {
   "use strict"
   return function getAnnotation(testCode, opts, testCm) {
+    console.log('======================================')
     try {
-      (function () { eval(userCode) })()
+      eval(userCode)
       cb([])
-    } catch (err) {      
+      console.log('eval userCode::: success')
+    } catch (err) {
+      console.log('eval userCode::: failed')
       cb(apply(moulinter(err, userCode, 1)))
-      return [ defaultAnnotation ]
+      return []
     }
 
     try {
       index = 0
-      success.broadcast(eval(userCode +'\n'+ testCode +'\n'+ sauce[0].postData))
+      sauce().success(eval(userCode +'\n'+ testCode +'\n'+ sauce().postData))
+      console.log('eval testCode::: success')
     } catch (err2) {
+      console.log('eval testCode::: failed')
       return apply(moulinter(err2, testCode, count(userCode, '\n') + 2))
     }
     return apply([])
   }
 }
-
-buildAnnotation.success = success.listen
 
 module.exports = buildAnnotation

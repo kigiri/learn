@@ -1,3 +1,8 @@
 #moulinette {
-  width: 800px
+  opacity: 1;
+  transition: opacity cubic-bezier(0.1, 0.1, 0, 1) 3s;
+}
+
+#moulinette.loading {
+  opacity: 0;
 }

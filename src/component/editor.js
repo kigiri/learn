@@ -3,18 +3,10 @@ const each = require('lib/each')
 const keyDown = require('lib/event')
 const display = require('component/terminal-display')
 const ev = require('geval/event')
+const editor = require('helper/init-code-mirror')('editor')
 
 require('lib/code-mirror')
 require('style/code-mirror.css')
-
-function cleanup() {
-  const prevEditor = document.getElementById('editor')
-  prevEditor && prevEditor.firstChild && prevEditor.firstChild.remove()
-}
-
-cleanup() // fix hot reload
-let loaded = false
-const editor = h('div#editor')
 
 const evalEvent = ev()
 
@@ -24,29 +16,22 @@ const evalCode = (text, cb, opts, cm) => {
 }
 
 const render = state => {
-  if (state.codeMirror && !loaded) {
-    loaded = true
-    let cm = state.codeMirror(document.getElementById('editor'), {
-      theme: 'dracula',
-      tabSize: 2,
+  if (state.codeMirror && !editor.loaded) {
+    const cm = editor(state.codeMirror, {
       autofocus: true,
-      lineNumbers: true,
-      scrollPastEnd: true,
-      scrollbarStyle: 'null',
+      readOnly: false,
       inputStyle: 'contenteditable',
       rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
       keyMap: 'sublime',
-      value: "const user = {\n   /* set your user name and password */\n}\n",
-      // lintOnChange: true,
-      gutters: ["CodeMirror-lint-markers"],
-      mode: "javascript",
+      value: state.sauce.example,
+      lintOnChange: true,
     })
     setTimeout(() => cm.setOption("lint", {
       getAnnotations: evalCode,
       async: true
     }), 10);
   }
-  return editor
+  return editor.rendered
 }
 
 render.eval = evalEvent.listen

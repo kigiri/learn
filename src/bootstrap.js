@@ -1,6 +1,7 @@
 const document = require('global/document')
 const app = require('lib/app')
-const state = require('./state')
+const state = require('state')
+const sauce = require('data/sauce')
 
 require('style/spinner.css')
 require('style/pure.css')

@@ -1,5 +1,7 @@
 .left-side, .right-side {
   height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -8,7 +10,7 @@
 }
 
 .right-side {
-  float: right;  
+  float: right;
   box-shadow: 9px 0 18px 14px #22242F, -1px 0 #191B27;
 }
 

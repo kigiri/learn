@@ -9,6 +9,8 @@ const globalState = {
   observ: buildState({
     split: observ(0.5),
     codeMirror: observ(null),
+    sauce: observ({}),
+    cookProps: observ({ eye: '_', message: 'Loading...' }),
     messagesCount: observ(0),
     videoId: observ(''),
     videoDisplay: observ('normal'),

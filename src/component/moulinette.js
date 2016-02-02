@@ -1,65 +1,34 @@
 const h = require('lib/h')
-const test00 = require('sauce/00')
 const editor = require('component/editor')
 const buildAnnotation = require('sloppy/build-annotation')
+const observables = require('state').observ
 const cook = require('layout/the-cook')
 const greet = require('helper/greet')
+const moulinette = require('helper/init-code-mirror')('moulinette')
 
 require('layout/moulinette.css')
 
-function cleanup() {
-  const prevElem = document.getElementById('moulinette')
-  prevElem && prevElem.firstChild && prevElem.firstChild.remove()
-}
-
-cleanup() // fix hot reload
-let loaded = false
-const moulinette = h('#moulinette')
-let clearEval = editor.eval(args => args.cb([]))
-const cookProps = {
-  eye: 'o',
-  message: greet(),
-}
+const clearEval = editor.eval(args => args.cb([]))
 
 const applyCook = annotations => {
   if (annotations.length) {
-    cookProps.eye = 'x'
-    cookProps.message = annotations[0].message
-  } else {
-    cookProps.eye = 'o'
-    cookProps.message = greet()
+    observables.cookProps.set({ eye: 'x', message: annotations[0].message })
   }
   return annotations
 }
 
 const render = state => {
-  if (state.codeMirror && !loaded) {
-    loaded = true
-    let moulmoul = state.codeMirror(document.getElementById('moulinette'), {
-      theme: 'dracula',
-      tabSize: 2,
-      autofocus: false,
-      lineNumbers: true,
-      readOnly: true,
-      scrollPastEnd: true,
-      scrollbarStyle: 'null',
-      value: test00,
-      lintOnChange: false,
-      gutters: ["CodeMirror-lint-markers"],
-      lint: false,
-      mode: "javascript",
-    })
+  if (state.codeMirror && !moulinette.loaded) {
+    const cm = moulinette(state.codeMirror, { value: state.sauce.test })
     clearEval()
-    editor.eval(args => moulmoul.setOption("lint", {
+    editor.eval(args => cm.setOption("lint", {
       getAnnotations: buildAnnotation(args.text, args.cm, args.cb, applyCook)
     }))
   }
   return [
-    cook(cookProps),
-    moulinette,
+    cook(observables.cookProps()),
+    moulinette.rendered,
   ]
 }
-
-
 
 module.exports = render
