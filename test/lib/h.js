@@ -1,5 +1,6 @@
 module.exports = (test, h) => {
   const curry = h.curry('#cacao.pouet')
+  const curryFromObject = h.curry({ id: 'yolo' })()
   const fromCurry = curry({ id: 'overriden' })
   const fromCurry2 = curry()
   const fromStyle = curry.style({ color: 'red' })
@@ -28,4 +29,7 @@ module.exports = (test, h) => {
 
   test.equal('h defaults tag should be div')
     (fromCurry2.tagName, 'DIV')
+
+  test.equal('h curry must work form object properties')
+    (curryFromObject.properties.id, 'yolo')
 }

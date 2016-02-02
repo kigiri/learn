@@ -74,9 +74,7 @@ function addChild(c, childNodes, tag, props) {
   } else if (is.child(c)) {
     childNodes.push(c)
   } else if (is.arr(c)) {
-    for (let child of c) {
-      addChild(child, childNodes, tag, props)
-    }
+    each(c, child => addChild(child, childNodes, tag, props))
   } else {
     throw UnexpectedVirtualElement({
       foreignObject: c,
@@ -132,15 +130,25 @@ const h = (tagName, properties, children) =>
   applyArgsToBuild(parseArgs(tagName, properties, children))
 
 h.build = buildVnode
-h.curry = (tagName, properties) => (args => {
-  const props = args.props || {}
-  const tag = args.tag
+h.curry = (tagName, properties) => {
+  let tag
+  let props
+
+  if (is.str(tagName)) {
+    const args = parseArgs(tagName, properties)
+    tag = args.tag;
+    props = args.props || {}
+  } else {
+    tag = 'DIV'
+    props = tagName || {}
+  }
+
   const curryfied = (newProps, children) => 
     applyArgsToBuild(parseCurryArgs({ tag, props }, newProps, children))
 
   curryfied.style = (style, children) => curryfied({ style }, children)
 
   return curryfied
-})(parseArgs(tagName, properties))
+}
 
 module.exports = h
