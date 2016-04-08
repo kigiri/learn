@@ -1,11 +1,11 @@
 const ws = require('lib/ws')
-const each = require('lib/each')
+const each = require('lib/collection/each')
 const find = require('lib/find')
 const test00 = require('sauce/00.test')
 const xmpl00 = require('sauce/00.xmpl')
 const observables = require('state').observ;
 const cookProps = require('state').observ.cookProps
-const get = require('lib/get')
+const inRange = require('lib/arr').inRange
 
 // require([
 //   "sauce/00.test",
@@ -16,7 +16,7 @@ let currentIdx = 0
 const set = () => observables.sauce.set(saucelist[currentIdx])
 
 const load = idx => {
-  const newIdx = get.inRange(saucelist, idx)
+  const newIdx = inRange(saucelist, idx)
   if (newIdx === currentIdx) return
   currentIdx = idx
   set()
@@ -48,7 +48,7 @@ const saucelist = [
   },
 ]
 
-each(saucelist, (s, i) => s.idx = i)
+each((s, i) => s.idx = i, saucelist)
 
 set()
 

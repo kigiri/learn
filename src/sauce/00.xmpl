@@ -22,3 +22,6 @@ sauce.amount = amount
 // name and password
 // pick your name and password carefully.
 // -> have fun !
+
+
+// user = { name: 'exmpl', password: 'debug555' }

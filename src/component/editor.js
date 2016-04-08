@@ -1,5 +1,4 @@
 const h = require('lib/h')
-const each = require('lib/each')
 const keyDown = require('lib/event')
 const display = require('component/terminal-display')
 const ev = require('geval/event')

@@ -8,7 +8,7 @@
            .--,--.
            `.  ,.'
             |___|
-            :o o:   O    Are you ready for cookin' ?
+            :o o:   O    La recette du succès, à la sauce curry !
            _`~^~'_  |    
          /'   ^   `\=)
        .'  _______ '~|
@@ -20,6 +20,30 @@
 
 
 */
+
+function until(fn, max, i) {
+  while (++i < max) {
+    if (fn(i) === false) return false
+  }
+  return true
+}
+
+function isPrime(n) {
+  return until(i => !Boolean(i % n), Math.floor(Math.sqrt(n)), 0)
+}
+
+const getPrime = (prime => () => {
+  const matchPrime = i => {
+    if (isPrime(i)) {
+      prime = i
+      return false
+    }
+  }
+
+  until(matchPrime, Infinity, prime + 1)
+
+  return prime
+})(0)
 
 
 // Node must be a function

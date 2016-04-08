@@ -1,4 +1,4 @@
-const getRandom = require('lib/get').random
+const getRandom = require('lib/arr').random
 const greetings = [
  'Hello',
  'Hello There',

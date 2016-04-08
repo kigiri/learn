@@ -2,10 +2,10 @@ const h = require('lib/h')
 const map = require('lib/map')
 
 const display = h.curry('#terminal-display', {
-  style: { width: '100%' }
+  // style: { width: '100%' }
 });
 
-const line = h.curry('div.teminal-message')
+const line = h.curry('.terminal-message')
 
 const selfStyle = {
   color: '#66d9ef',
@@ -13,16 +13,18 @@ const selfStyle = {
 
 const puce = h.curry('span.terminal-puce')
 
-const renderMsg = msg => h('div.terminal-message', {
+const messageWrap = h.curry('#messages-wrapper')
+
+const renderMsg = msg => line({
   className: ((msg.type === 'user' && msg.id === localStorage.sessionId)
     ? 'self'
-    : msg.type)
+    : (msg.type || ''))
   },
   msg.count > 1
     ? [ puce(String(msg.count)), msg.content ]
     : msg.content)
 
-module.exports = props => display(map(wesh(props.messageList), renderMsg))
+module.exports = props => display(messageWrap(map(props.messageList, renderMsg)))
 
 /*
 #282a36 // bg

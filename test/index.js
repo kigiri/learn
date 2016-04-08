@@ -1,4 +1,5 @@
 const test = require('tape')
+const proto = require('tape/lib/test').prototype
 const join = require('path').join
 const base = join(__dirname, '../src')
 const modulePath = require('app-module-path')
@@ -11,15 +12,14 @@ if (!Function.prototype.bind) {
 
 modulePath.addPath(base)
 
-;[
-  'equal',
-  'notEqual',
-].forEach(key => test[key] = msg => (...args) => test(msg, assert => {
-  assert[key](...args)
-  assert.end()
-}))
+Object.keys(proto).forEach(key => test[key] = msg =>
+  (...args) => test(msg, assert => {
+    assert[key](...args)
+    assert.end()
+  }))
 
 ;[
-  'lib/assign-deep',
-  'lib/h',
+  // 'lib/h',
+  // 'lib/assign-deep',
+  'component/section',
 ].forEach(path => require('./'+ path)(test, require(join(base, path))))

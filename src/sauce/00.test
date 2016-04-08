@@ -27,3 +27,9 @@ isTrue(/[A-Za-z]/.test(user.password))
 
 // user.password must have at least a number
 isTrue(/[0-9]/.test(user.password))
+
+// user must be not exists by the server
+server('user.exists', user)
+
+// user must be confirmed by the server
+server('user.confirm', user)

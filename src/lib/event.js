@@ -1,8 +1,8 @@
-const document = require('global/document');
-const window = require('global/window');
-const observ = require('observ');
-const each = require('lib/each');
-const loop = require('lib/loop');
+const document = require('global/document')
+const window = require('global/window')
+const observ = require('lib/emiter/observ')
+const each = require('lib/collection/each')
+const loop = require('lib/loop')
 
 const base = document.documentElement;
 
@@ -31,54 +31,54 @@ const updates = []
 
 const linker = getter => {
   let prev = getter()
-  const val = observ(prev);
+  const val = observ(prev)
 
   updates.push(() => {
-    const next = getter();
+    const next = getter()
 
     if (next !== prev) {
-      val.set(prev = next);
+      val.set(prev = next)
     }
-  });
+  })
 
-  return val;
+  return val
 }
 
-const scrollTop = observ(0);
-const scrollBottom = observ(0);
-const setIfChanged = (obs, val) => obs() !== val && obs.set(val);
+const scrollTop = observ(0)
+const scrollBottom = observ(0)
+const setIfChanged = (obs, val) => obs() !== val && obs.set(val)
 
 const calcScroll = top => {
-  setIfChanged(scrollTop, top);
-  setIfChanged(scrollBottom, top + window.innerHeight);
+  setIfChanged(scrollTop, top)
+  setIfChanged(scrollBottom, top + window.innerHeight)
 }
 
-const exec = fn => fn();
+const exec = each(fn => fn())
 
 const updateDom = () => {
-  const rect = base.getBoundingClientRect();
+  const rect = base.getBoundingClientRect()
 
-  domState.width = rect.width;
-  domState.height = rect.height;
+  domState.width = rect.width
+  domState.height = rect.height
   if (domState.top !== rect.top) {
-    calcScroll(Math.abs(domState.top = rect.top));
+    calcScroll(Math.abs(domState.top = rect.top))
   }
-  each(updates, exec);
+  exec(updates)
 }
 
-const clearButtons = () => mouseState.m = mouseState.r = mouseState.l = false;
+const clearButtons = () => mouseState.m = mouseState.r = mouseState.l = false
 
-window.addEventListener('mouseup',
-  event => mouseState[mouseKeys[event.which]] = true);
 window.addEventListener('mousedown',
-  event => mouseState[mouseKeys[event.which]] = false);
+  event => mouseState[mouseKeys[event.which]] = true)
+window.addEventListener('mouseup',
+  event => mouseState[mouseKeys[event.which]] = false)
 
 window.addEventListener('mousemove', event => {
-  mouseState.x = event.pageX;
-  mouseState.y = event.pageY;
-  mouseState.hover = event.target;
+  mouseState.x = event.pageX
+  mouseState.y = event.pageY
+  mouseState.hover = event.target
   if (!event.which) {
-    clearButtons();
+    clearButtons()
   }
 });
 
@@ -98,7 +98,7 @@ const fullState = {
   viewHeight: linker(() => window.innerHeight),
 }
 
-updateDom();
-loop(updateDom);
+updateDom()
+loop(updateDom)
 
-module.exports = fullState;
+module.exports = fullState

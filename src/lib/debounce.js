@@ -1,8 +1,11 @@
-module.exports = (clear => (fn, delta, imediate) => (...args) => {
-  clearTimeout(clear)
-  if (imediate) {
-    fn(...args)
-    return imediate = false
+module.exports = (fn, delta, imediate) => {
+  let clear
+  return (...args) => {
+    clearTimeout(clear)
+    if (imediate) {
+      fn(...args)
+      return imediate = false
+    }
+    return clear = setTimeout(() => fn(...args), delta)
   }
-  return clear = setTimeout(() => fn(...args), delta)
-})()
+}

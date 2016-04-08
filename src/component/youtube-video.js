@@ -1,5 +1,5 @@
 const is = require('lib/is')
-const each = require('lib/each')
+const each = require('lib/collection/each')
 const globalState = require('state')
 const cuid = require('cuid')
 const document = require('global/document')
@@ -97,8 +97,8 @@ const render = props => {
   return renderIframe.wrapper(virtualIframe)
 }
 
-each(YouTubeApiMethods, method =>
-  render[method] = (...args) => ytApi(method, args))
+each(method =>
+  render[method] = (...args) => ytApi(method, args), YouTubeApiMethods)
 
 window.ytv = render
 window.state = globalState.observ

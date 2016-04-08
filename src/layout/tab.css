@@ -1,0 +1,19 @@
+.tab {
+  overflow: auto;
+  height: 100%;
+  border: 1px solid #15171D;
+  box-sizing: border-box;
+  align-items: stretch;
+  align-content: stretch;
+  overflow: hidden;
+  flex: 1;
+  position: relative;
+}
+
+.tab-wrap {
+  height: 100%;
+  display: flex;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.1);
+  flex: 1;
+}

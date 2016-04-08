@@ -1,8 +1,10 @@
 var moulinter = require('helper/moulinette-linter')
 var observables = require('state').observ
 var sauce = observables.sauce
-var cookProps = observables.cookProps
+var animateTheCook = require('helper/animate-the-cook')
 var count = require('lib/count')
+var series = require('lib/promise-series')
+
 
 
 var index = 0
@@ -13,6 +15,15 @@ var validator = bool => valid => {
   }
 }
 
+
+var loadAnimation = animateTheCook([
+  { eye: '.', message: 'waiting for the server-..' },
+  { eye: 'o', message: 'waiting for the server-..' },
+  { eye: 'O', message: 'waiting for the server.-.' },
+  { eye: '@', message: 'waiting for the server..-' },
+  { eye: '*', message: 'waiting for the server.-.' },
+])
+
 var isTrue = validator(true)
 var isFalse = validator(false)
 
@@ -22,30 +33,53 @@ var defaultAnnotation = {
   to: { line: 1, ch: 0 },
 }
 
-
-function buildAnnotation(userCode, editorCm, cb, apply) {
+function buildAnnotation(userCode, editorCm, editorCb, apply) {
   "use strict"
-  return function getAnnotation(testCode, opts, testCm) {
-    console.log('======================================')
+  const work = [ Promise.resolve() ]
+
+  function server(action, data) {
+    const err = Error('unable to reach the server with' + action)
+    work.push(() => new Promise((s, f) => {
+      setTimeout(() => s(data), 5000)
+    }))
+  }
+
+  return function getAnnotation(testCode, testCb, opts, testCm) {
     try {
       eval(userCode)
-      cb([])
+      editorCb([])
       console.log('eval userCode::: success')
-    } catch (err) {
+    } catch (errUser) {
       console.log('eval userCode::: failed')
-      cb(apply(moulinter(err, userCode, 1)))
-      return []
+      editorCb(apply(moulinter(errUser, userCode, 1)))
+      return testCb([])
     }
 
+    function fail(err) {
+      console.log('eval testCode::: failed')
+      const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)
+      testCm.scrollIntoView({
+        line: annotations[0].from.line,
+        ch: 0,
+      }, 15)
+      testCb(apply(annotations))
+    }
+
+    let evalResult
     try {
       index = 0
-      sauce().success(eval(userCode +'\n'+ testCode +'\n'+ sauce().postData))
-      console.log('eval testCode::: success')
-    } catch (err2) {
-      console.log('eval testCode::: failed')
-      return apply(moulinter(err2, testCode, count(userCode, '\n') + 2))
+      evalResult = eval(userCode +'\n'+ testCode +'\n'+ sauce().postData)
+    } catch (errCode) {
+      return fail(errCode)
     }
-    return apply([])
+
+    loadAnimation.loop()
+    series(work).then(() => {
+      console.log('eval testCode::: success')
+      sauce().success(evalResult)
+      testCb(apply([]))
+    }).catch(fail).then(loadAnimation.stop)
+    //
   }
 }
 

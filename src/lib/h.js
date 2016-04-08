@@ -1,5 +1,5 @@
 const is = require('lib/is')
-const each = require('lib/each')
+const each = require('lib/collection/each')
 const assign = require('lib/assign-deep')
 
 const VNode = require('virtual-dom/vnode/vnode')
@@ -11,11 +11,11 @@ const evHook = require('virtual-dom/virtual-hyperscript/hooks/ev-hook')
 
 const pixelize = require('lib/default-unit')
 
-const transformProperties = (value, propName, props) => {
+const transformProperties = each((value, propName, props) => {
   if (!is.hook(value) && /^ev[-A-Z]/.test(propName)) {
     props[propName] = evHook(value)
   }
-}
+})
 
 function parseArgs(cssPath, props, children) {
   if (!children && is.children(props)) {
@@ -59,7 +59,7 @@ function buildVnode(tag, props, children, key, namespace) {
     pixelize(props.style)
   }
 
-  each(props, transformProperties)
+  transformProperties(props)
   addChild(children, childNodes, tag, props)
 
   return new VNode(tag, props, childNodes, key, namespace)
@@ -74,7 +74,7 @@ function addChild(c, childNodes, tag, props) {
   } else if (is.child(c)) {
     childNodes.push(c)
   } else if (is.arr(c)) {
-    each(c, child => addChild(child, childNodes, tag, props))
+    each(child => addChild(child, childNodes, tag, props), c)
   } else {
     throw UnexpectedVirtualElement({
       foreignObject: c,
@@ -115,7 +115,7 @@ function parseCurryArgs(args, props, children) {
     args.children = children
     if (props) {
       if (props.className && args.props.className) {
-        props.className = props.className +' '+ args.className
+        props.className = props.className +' '+ args.props.className
       }
       args.props = assign({}, args.props, props)
     }
@@ -124,7 +124,7 @@ function parseCurryArgs(args, props, children) {
 }
 
 const applyArgsToBuild = arg =>
-  buildVnode(arg.tag, arg.props, arg.children, arg.key, arg.namespace)
+  buildVnode(arg.tag, arg.props, arg.children, arg.key, arg.namespace, arg)
 
 const h = (tagName, properties, children) =>
   applyArgsToBuild(parseArgs(tagName, properties, children))

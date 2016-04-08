@@ -9,7 +9,7 @@
  * @providesModule CSSProperty
  */
 const store = require('lib/store');
-const each = require('lib/each');
+const each = require('lib/collection/each');
 const is = require('lib/is');
 const capitalize = require('lib/str').capitalize;
 const prefixes = ['Webkit', 'ms', 'Moz', 'O', ''];
@@ -47,7 +47,7 @@ const isUnitlessNumber = store([
   'strokeDashoffset',
   'strokeOpacity',
   'strokeWidth',
-], (acc, key) => each(prefixes, prefix => acc[prefixKey(prefix, key)] = true))
+], (acc, key) => each(prefix => acc[prefixKey(prefix, key)] = true), prefixes)
 
 function prefixKey(prefix, key) {
   return prefix ? prefix + capitalize(key) : key;
@@ -59,4 +59,4 @@ const pixelize = (val, key, style) => {
   }
 }
 
-module.exports = style => each(style, pixelize);
+module.exports = each(pixelize);

@@ -17,6 +17,8 @@ function isUndef(val) { return val === undefined }
 function isPromise(fn) { return fn && isFn(fn.then) && isFn(fn.catch) }
 function isChild(x) { return x && _vTypes[x.type] }
 function isChildren(x) { return isStr(x) || isArr(x) || isChild(x) }
+function isObserv(obs) { return isFn(obs) && isFn(obs.set) }
+function isEvent(ev) { return isFn(ev.listen) && isFn(ev.broadcast) }
 function isHook(hook) {
   return hook &&
     (typeof hook.hook === "function" && !hook.hasOwnProperty("hook") ||
@@ -41,6 +43,8 @@ module.exports = {
   float: isFloat,
   child: isChild,
   hook: isHook,
+  event: isEvent,
+  observ: isObserv,
   promise: isPromise,
   children: isChildren,
 };

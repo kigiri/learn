@@ -8,6 +8,8 @@ const moulinette = require('helper/init-code-mirror')('moulinette')
 
 require('layout/moulinette.css')
 
+const wrap = h.curry('#moulinette-wrapper')
+
 const clearEval = editor.eval(args => args.cb([]))
 
 const applyCook = annotations => {
@@ -22,13 +24,14 @@ const render = state => {
     const cm = moulinette(state.codeMirror, { value: state.sauce.test })
     clearEval()
     editor.eval(args => cm.setOption("lint", {
+      async: true,
       getAnnotations: buildAnnotation(args.text, args.cm, args.cb, applyCook)
     }))
   }
-  return [
+  return wrap([
     cook(observables.cookProps()),
     moulinette.rendered,
-  ]
+  ])
 }
 
 module.exports = render

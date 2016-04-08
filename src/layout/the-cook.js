@@ -1,9 +1,8 @@
 const h = require('lib/h')
-const map = require('lib/map')
-const each = require('lib/each')
+const map = require('lib/collection/map')
+const each = require('lib/collection/each')
 const cook = require('sauce/cook-ascii.txt').split('o')
 const greet = require('helper/greet')
-const reduce = require('lib/reduce')
 
 require('./the-cook.css')
 
@@ -24,13 +23,13 @@ const centerStr = (src, str) => {
   return src.slice(0, padding) + str + src.slice(padding + str.length)
 }
 
-const centerSentence = (sentence, idx, all) => {
+const centerEach = map((sentence, idx, all) => {
   const base = (idx === all.length - 1) ? bubbleLast : bubbleMiddle
   return leftPadding + centerStr(base, sentence)
-}
+})
 
 const asciiBubble = sentences => bubbleTop
-  + map(sentences, centerSentence).join('\n')
+  + centerEach(sentences).join('\n')
 
 const bubble = h.curry('#speach-bubble')
 
@@ -39,14 +38,14 @@ const speach = message => {
   const sentences = []
 
   let currentSentence = words[0]
-  each(words.slice(1), word => {
+  each(word => {
     if (word.length + currentSentence.length < 25) {
       currentSentence += ' '+ word
     } else {
       sentences.push(currentSentence)
       currentSentence = word
     }
-  })
+  }, words.slice(1))
   sentences.push(currentSentence)
 
   if (sentences.length < 2) {

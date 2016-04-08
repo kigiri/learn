@@ -3,8 +3,8 @@ const calcWidth = require('helper/calc-width')
 
 require('./side.css');
 
-const rightSide = h.curry('div.right-side').style;
-const leftSide = h.curry('div.left-side').style;
+const rightSide = h.curry('.right-side').style;
+const leftSide = h.curry('.left-side').style;
 
 module.exports = {
   right: (props, children) => rightSide({

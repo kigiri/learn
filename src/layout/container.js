@@ -3,6 +3,7 @@ const p = require('layout/pure');
 const props = {
   id: 'view-container',
   style: {
+    display: 'flex',
     height: '100%',
   },
 };

@@ -48,9 +48,7 @@ const connect = (connected => () => {
   if (connected) return
   const clear = send.listen(content => ws.send(content))
   const ws = new WebSocket("ws://learn.cdenis.net:7266/")
-  ws.onopen = ev => {
-    ws.send('handshake:'+ id)
-  }
+  ws.onopen = ev => ws.send('handshake:'+ id)
   ws.onerror = onerror
   ws.onclose = ev => {
     clear()
@@ -59,8 +57,6 @@ const connect = (connected => () => {
   ws.onmessage = onmessage
   connected = true
 })(false)
-
-often(connect)
 
 typeList.forEach(addType)
 

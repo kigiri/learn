@@ -5,7 +5,7 @@ const linker = require('lib/dom-linker')
 const observ = require('observ')
 const event = require('geval/event')
 const caret = require('lib/caret')
-const each = require('lib/each')
+const each = require('lib/collection/each')
 const focusedElem = require('lib/event').focus
 const str = require('lib/str')
 const ws = require('lib/ws')
@@ -58,7 +58,7 @@ const expandSelection = () => {
   const sel = el.selectionStart
   const val = el.value
 
-  each(val, () => wesh(false))
+  each(() => wesh(false), val)
   el.value = str.insert(el.value, sel, ')')
 
   caret(el, sel)
@@ -135,6 +135,7 @@ const keydown = handler({
         }
       } else {
         if (val.length > 255) return execError(el, 'tooLong')
+        display.post('user', val)
         ws.send.msg(val)
       }
       el.value = ''
