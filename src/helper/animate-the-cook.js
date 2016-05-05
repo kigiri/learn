@@ -10,8 +10,6 @@ const setProps = props => cookProps.set(wesh(defaults(props), cookProps()))
 const applyProps = reduce((acc, props) => {
   acc.delay += props.delay || defaultDelay
 
-
-  console.log(acc)
   acc.timeouts.push(setTimeout(() => setProps(props), acc.delay))
 
   return acc

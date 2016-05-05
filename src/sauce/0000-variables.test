@@ -28,8 +28,13 @@ isTrue(/[A-Za-z]/.test(user.password))
 // user.password must have at least a number
 isTrue(/[0-9]/.test(user.password))
 
-// user must be not exists by the server
-server('user.exists', user)
+// check user in the server
+server.user.check(user)
+// if the user already exists, it will login, otherwhise create it.
 
-// user must be confirmed by the server
-server('user.confirm', user)
+// Tests can save data that you may access later on
+// this test export the user for your next tests
+
+store.set('user', user)
+
+completed('variables')
