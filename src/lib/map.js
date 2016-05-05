@@ -8,7 +8,7 @@ function mapObj(obj, fn) {
 
   while (++i < max) {
     key = keys[i];
-    result[obj[key]] = fn(obj[key], key, obj);
+    result[key] = fn(obj[key], key, obj);
   }
   return result;
 }

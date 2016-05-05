@@ -7,9 +7,26 @@ function Observ(value) {
   const subscriber = fn => sub(listeners, fn, value)
 
   subscriber.set = val => {
-    each(fn => fn(val), listeners)
     value = val
+    each(fn => fn(val), listeners)
   }
+
+  return subscriber
+}
+
+const defaultCheck = (a, b) => a !== b
+function ObservCheck(value, check) {
+  const listeners = []
+  check || (check = defaultCheck)
+  const subscriber = fn => sub(listeners, fn, value)
+
+  subscriber.set = val => {
+    if (!check(val, value)) return
+    value = val
+    each(fn => fn(val), listeners)
+  }
+
+  subscriber.setCheck = newCheck => check = newCheck
 
   return subscriber
 }
@@ -27,6 +44,7 @@ function ObservOnce() {
   return subscriber
 }
 
+Observ.check = ObservCheck
 Observ.once = ObservOnce
 
 const buildMethod = method => (...args) => {

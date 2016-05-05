@@ -58,6 +58,11 @@ const exec = each(fn => fn())
 const updateDom = () => {
   const rect = base.getBoundingClientRect()
 
+  const activeElement = document.activeElement
+  if (activeElement.__update_observable__) {
+    activeElement.__update_observable__(activeElement.textContent)
+  }
+
   domState.width = rect.width
   domState.height = rect.height
   if (domState.top !== rect.top) {
@@ -80,7 +85,7 @@ window.addEventListener('mousemove', event => {
   if (!event.which) {
     clearButtons()
   }
-});
+})
 
 const fullState = {
   scrollTop,
