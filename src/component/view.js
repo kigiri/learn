@@ -12,8 +12,8 @@ const dummy = () => String(i++)
 
 tab.children = []
 
-tab.x(moulinette)
 tab.x(editor)
+tab.x(moulinette)
 tab.x(terminal)
 // const p2 = tab.y(video, editorTab)
 // const p3 = tab.y(terminal, p2)

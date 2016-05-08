@@ -17,11 +17,13 @@ const config = {
       hash: true,
       inject: 'body',
       dnsList: [
-        'https://www.youtube.com/',
-        'https://www.google.com/',
-        'https://s.ytimg.com/',
-        'https://i.ytimg.com/',
+        // 'https://www.youtube.com/',
+        // 'https://www.google.com/',
+        // 'https://s.ytimg.com/',
+        // 'https://i.ytimg.com/',
         'https://fonts.gstatic.com/',
+        'https://api.github.com',
+        'https://raw.githubusercontent.com/',
       ]
     }),
   ],

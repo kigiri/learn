@@ -24,7 +24,7 @@ function reduceIter(iter, fn, result) {
 }
 
 module.exports = (collection, fn, first) => {
-  if (!collection) return collection
+  if (!collection) return first
   return (isInt(collection.length) && collection.length > 0)
     ? reduceIter(collection, fn, first)
     : reduceObj(collection, fn, first);
