@@ -1,5 +1,5 @@
 const path = require('path');
-const jade = require('jade');
+const jade = require('pug');
 const pathJoin = path.join;
 const getAssets = require('./assets');
 const nodeModules = pathJoin(__dirname, 'node_modules');
