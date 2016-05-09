@@ -19,7 +19,7 @@ Object.keys(proto).forEach(key => test[key] = msg =>
   }))
 
 ;[
-  // 'lib/h',
-  // 'lib/assign-deep',
-  'component/section',
+  'lib/h',
+  'lib/assign-deep',
+  // 'component/section',
 ].forEach(path => require('./'+ path)(test, require(join(base, path))))

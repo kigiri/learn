@@ -8,11 +8,11 @@
  *
  * @providesModule CSSProperty
  */
-const store = require('lib/store');
-const each = require('lib/collection/each');
-const is = require('lib/is');
-const capitalize = require('lib/str').capitalize;
-const prefixes = ['Webkit', 'ms', 'Moz', 'O', ''];
+const store = require('lib/store')
+const each = require('lib/collection/each')
+const is = require('lib/is')
+const capitalize = require('lib/str').capitalize
+const prefixes = ['Webkit', 'ms', 'Moz', 'O', '']
 /**
  * CSS properties which accept numbers but are not in units of "px".
  */
@@ -47,16 +47,16 @@ const isUnitlessNumber = store([
   'strokeDashoffset',
   'strokeOpacity',
   'strokeWidth',
-], (acc, key) => each(prefix => acc[prefixKey(prefix, key)] = true), prefixes)
+], (acc, key) => each(prefix => acc[prefixKey(prefix, key)] = true, prefixes))
 
 function prefixKey(prefix, key) {
-  return prefix ? prefix + capitalize(key) : key;
+  return prefix ? prefix + capitalize(key) : key
 }
 
 const pixelize = (val, key, style) => {
   if (val && is.num(val) && !isUnitlessNumber[key]) {
-    style[key] = val +'px';
+    style[key] = val +'px'
   }
 }
 
-module.exports = each(pixelize);
+module.exports = each(pixelize)
