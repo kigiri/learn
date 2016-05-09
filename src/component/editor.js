@@ -22,7 +22,7 @@ const render = state => {
       inputStyle: 'contenteditable',
       rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
       keyMap: 'sublime',
-      value: state.sauce.example,
+      value: window.localStorage[state.sauce] || '',
       lintOnChange: true,
     })
     setTimeout(() => cm.setOption("lint", {

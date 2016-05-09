@@ -11,9 +11,9 @@ const failOnWrongType = (key, val) => {
 }
 
 const matchVariable = /\/:([^\/]+)/g
-const toJSON = r => {
-  if (r.ok) return r.json()
-  throw Object.assign(Error(r.statusText), r)
+const toJSON = res => {
+  if (res.ok) return res.json()
+  throw Object.assign(Error(res.statusText), { res })
 }
 
 module.exports = (available, baseHeaders, routes) => map(routes, base => {

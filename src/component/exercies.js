@@ -2,6 +2,7 @@
 const state = require('state').observ
 const passError = require('lib/err')
 const github = require('helper/github')
+const theCook = require('component/the-cook')
 
 const updateConfig = cfg => state.config.set(assignDeep(state.config(), cfg))
 const arrayToMap = key => arr => store(arr, (acc, el) => acc[el[key]] = el)
@@ -9,10 +10,6 @@ const arrayToMap = key => arr => store(arr, (acc, el) => acc[el[key]] = el)
 arrayToMap.name = arrayToMap('name')
 
 const init = () => github.loadUser()
-  .catch(passError.check({ code: 'Wrong Credentials' }, err => {
-    console.log(err)
-    return true
-  }))
   .then(updateConfig)
   .then(() => github.fork())
   .then(repo => updateConfig({ repo: repo.full_name }))
@@ -37,10 +34,8 @@ const init = () => github.loadUser()
   .then(exercises => {
     state.exercises.set(arrayToMap.name(exercises))
   })
-  .catch(err => state.cookProps.set({
-    eye: 'X',
-    message: 'initialization problem: '+ (err.code || err.message),
-  }))
+  .catch(err => theCook.say('X', 'initialization problem: '
+    + (err.code || err.message)), true)
 
 
 

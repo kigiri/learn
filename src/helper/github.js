@@ -13,12 +13,12 @@ const available = {}
 
 // github headers
 const baseHeaders = {
-  'Accept':  'application/vnd.github.v3+json',
+  Accept: 'application/vnd.github.v3+json',
+  Authorization: 'Basic '+ (window.localStorage.user || '')
 }
 
 const syncConfig = c => {
   available.config = c
-  baseHeaders.Authorization = 'Basic '+ btoa(c.login +':'+ c.password)
 }
 
 config(syncConfig)
@@ -35,7 +35,7 @@ dl.src = path => rawDl(REPO, path)
 const github = api(available, baseHeaders, {
   fork: { method: 'POST', url: `${API}/repos/${REPO}/forks` },
   browse: `${API}/repos/:repo/contents/:path`,
-  loadUser: `${API}/users/:config.login`,
+  loadUser: `${API}/user`,
   loadUpstream: `${API}/repos/${REPO}/git/refs/heads/${BRANCH}`,
   update: {
     method: 'PATCH',
@@ -81,5 +81,25 @@ github.browse.tests = () => github.browse({
 
 github.reset = () => github.loadUpstream()
   .then(us => github.update({ ref: us.ref, sha: us.object.sha }))
+
+github.verifyUser = user => {
+  baseHeaders.Authorization = 'Basic '+ btoa(user.login +':'+ user.password)
+  return github.loadUser()
+    .then(info => {
+      config.set(assignDeep(config(), info))
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = github

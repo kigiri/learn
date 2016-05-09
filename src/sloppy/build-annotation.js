@@ -1,11 +1,14 @@
-const moulinter = require('helper/moulinette-linter')
+const theCook = require('component/the-cook')
 const observables = require('state').observ
-const sauce = observables.sauce
-const animateTheCook = require('helper/animate-the-cook')
-const count = require('lib/count')
+const moulinter = require('helper/moulinette-linter')
+const reduce = require('lib/collection/reduce')
 const series = require('lib/promise-series')
+const count = require('lib/count')
+const map = require('lib/collection/map')
+const api = require('helper/github')
 const is = require('lib/is')
 
+const sauce = observables.sauce
 let index = 0
 const validator = bool => valid => {
   index++
@@ -13,14 +16,6 @@ const validator = bool => valid => {
     throw new Error('test #'+ index +' failed :(')
   }
 }
-
-const loadAnimation = animateTheCook([
-  { eye: '.', message: 'waiting for the server-..' },
-  { eye: 'o', message: 'waiting for the server-..' },
-  { eye: 'O', message: 'waiting for the server.-.' },
-  { eye: '@', message: 'waiting for the server..-' },
-  { eye: '*', message: 'waiting for the server.-.' },
-])
 
 const isTrue = validator(true)
 const isFalse = validator(false)
@@ -32,27 +27,36 @@ const defaultAnnotation = {
 }
 
 const separator = '\n__inUserCode__ = false;'
+const applyChainStack = reduce((q, e) => q.then(e.s, e.f))
 
 function buildAnnotation(userCode, editorCm, editorCb, apply) {
   "use strict"
   const work = [ Promise.resolve() ]
   let __inUserCode__ = true
 
-  function server(action, data) {
+  function githubProxy(fn, data) {
     if (__inUserCode__) {
-      throw new Error('You are not allowed to call the server directly')
+      throw new Error('You are not allowed to call the api directly')
     }
     const err = new Error()
-    console.log(action, data)
-    work.push(() => (new Promise((s, f) => {
-      setTimeout(() => s(data), 5000)
-    }).catch(e => {
-      err.message = e.message
-      throw e
-    })))
+    const stack = []
+    work.push(() => applyChainStack(stack, fn(data))
+      .catch(e => {
+        console.dir(e.res)
+        const { status, url } = e.res
+        err.message = `Github API ${url.slice(22)}: ${status} - ${e.message}`
+        throw err
+      }))
+
+    const $ = {
+      then: (s, f) => (stack.push({ s, f }), $),
+      catch: f => (stack.push({ f }), $),
+    }
+
+    return $
   }
 
-  server.user = { check: () => {} }
+  const github = map(fn => data => githubProxy(fn, data), api)
 
   const store = (s => ({
     get: key => {
@@ -68,21 +72,21 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
     }
   }))(new Map())
 
-  return function getAnnotation(testCode, testCb, opts, testCm) {
+  let clear
+  function getAnnotation(testCode, testCb, opts, testCm) {
+    window.localStorage[sauce()] = userCode
+    clear = null
     try {
       __inUserCode__ = true
       // TODO : test if the usercode contains __inUserCode__ anywhere
       eval(userCode)
       editorCb([])
-      console.log('eval userCode::: success')
     } catch (errUser) {
-      console.log('eval userCode::: failed')
       editorCb(apply(moulinter(errUser, userCode, 1)))
       return testCb([])
     }
 
     function fail(err) {
-      console.log('eval testCode::: failed')
       const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)
       testCm.scrollIntoView({
         line: annotations[0].from.line,
@@ -94,23 +98,30 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
     let evalResult
     try {
       index = 0
-      evalResult = eval(userCode + separator + testCode +'\n'+ sauce().postData)
+      evalResult = eval(userCode + separator + testCode)
     } catch (errCode) {
       return fail(errCode)
     }
 
-    loadAnimation.loop()
+    theCook.animate.load.loop()
     series(work).then(() => {
-      console.log('eval testCode::: success')
-      sauce().success(evalResult)
+      // sauce().success(evalResult)
       testCb(apply([]))
     }).catch(fail)
-      .then(() => {
-        loadAnimation.stop()
-        const match = testCode.split('// next test : ')[1]
-        console.log('next:', match.trim())
-      })
+      .then(theCook.animate.load.stop)
   }
+
+  const throttled = (...args) => {
+    if (clear) {
+      clearTimeout(clear)
+      clear = setTimeout(() => getAnnotation(...args), 250)
+    } else {
+      getAnnotation(...args)
+      clear = setTimeout(() => {}, 250)
+    }
+  }
+
+  return throttled
 }
 
 module.exports = buildAnnotation

@@ -2,7 +2,6 @@ const h = require('lib/h')
 const map = require('lib/collection/map')
 const each = require('lib/collection/each')
 const cook = require('sauce/cook-ascii.txt').split('o')
-const greet = require('helper/greet')
 
 require('./the-cook.css')
 
@@ -10,13 +9,11 @@ const upperPart = cook[0]
 const lowerPart = cook[2]
 
 const leftPadding = '                       '
-
-
-const bubbleTop =  '\n\n\n\n\n\n'+ leftPadding
-                     +'.--------------------------.\n'
-const bubbleMiddle = '|                           |'
-const bubbleLast =   '<                           |\n'
-     + leftPadding +' \\__________________________|'
+const bubbleTop = '\n\n\n\n\n\n' + leftPadding
+                     +'.-----------------------------------------.\n'
+const bubbleMiddle =  '|                                         |'
+const bubbleArrow =   '<                                         |'
+const bubbleLast =   ' \\________________________________________|'
 
 const centerStr = (src, str) => {
   const padding = Math.floor((src.length - str.length) / 2)
@@ -24,22 +21,22 @@ const centerStr = (src, str) => {
 }
 
 const centerEach = map((sentence, idx, all) => {
-  const base = (idx === all.length - 1) ? bubbleLast : bubbleMiddle
+  const base = (idx === ~~(all.length / 2)) ? bubbleArrow : bubbleMiddle
   return leftPadding + centerStr(base, sentence)
 })
 
 const asciiBubble = sentences => bubbleTop
-  + centerEach(sentences).join('\n')
+  + centerEach(sentences).join('\n') +'\n'+ leftPadding + bubbleLast
 
 const bubble = h.curry('#speach-bubble')
 
 const speach = message => {
-  const words = (message || greet()).split(' ').filter(Boolean)
+  const words = (message || 'hum hum').split(' ').filter(Boolean)
   const sentences = []
 
   let currentSentence = words[0]
   each(word => {
-    if (word.length + currentSentence.length < 25) {
+    if (word.length + currentSentence.length < (bubbleMiddle.length - 4)) {
       currentSentence += ' '+ word
     } else {
       sentences.push(currentSentence)
@@ -61,7 +58,7 @@ const speach = message => {
 const eyes = h.curry('span')
 const theCook = h.curry('#the-cook.noselect')
 
-const render = props => {
+module.exports = props => {
   const eye = props.eye || 'o'
   return theCook([
     speach(props.message),
@@ -70,5 +67,3 @@ const render = props => {
     lowerPart,
   ])
 }
-
-module.exports = render

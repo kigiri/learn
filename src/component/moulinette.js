@@ -1,27 +1,28 @@
-const h = require('lib/h')
-const editor = require('component/editor')
 const buildAnnotation = require('sloppy/build-annotation')
 const observables = require('state').observ
-const cook = require('layout/the-cook')
-const greet = require('helper/greet')
 const moulinette = require('helper/init-code-mirror')('moulinette')
+const editor = require('component/editor')
+const greet = require('helper/greet')
+const cook = require('layout/the-cook')
+const theCook = require('component/the-cook')
+const h = require('lib/h')
 
 require('layout/moulinette.css')
 
 const wrap = h.curry('#moulinette-wrapper')
 
 const clearEval = editor.eval(args => args.cb([]))
-
 const applyCook = annotations => {
   if (annotations.length) {
-    observables.cookProps.set({ eye: 'x', message: annotations[0].message })
+    theCook.say('x', annotations[0].message, true)
   }
   return annotations
 }
 
 const render = state => {
   if (state.codeMirror && !moulinette.loaded) {
-    const cm = moulinette(state.codeMirror, { value: state.sauce.test })
+    const cm = moulinette(state.codeMirror, { value: state.test })
+
     clearEval()
     editor.eval(args => cm.setOption("lint", {
       async: true,

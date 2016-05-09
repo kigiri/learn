@@ -10,7 +10,7 @@ module.exports = id => {
   const init =  (cm, extendConfig) => {
     init.loaded = true
     cleanup(id)
-    const el = document.getElementById(id);
+    const el = document.getElementById(id)
     return cm(el, defaultConf(extendConfig))
   }
 

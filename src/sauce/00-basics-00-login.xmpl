@@ -18,10 +18,9 @@ sauce.ingredient
 // I set the key amount with the value of the variable amount
 sauce.amount = amount
 
-// Your turn : declare a variable user, assign it to an object with the values
-// name and password
-// pick your name and password carefully.
-// -> have fun !
-
-
-// user = { name: 'exmpl', password: 'debug555' }
+/* Your turn : declare a variable user, assign it to an object with the values
+ * login and password
+ * You must set a valid Github login and password.
+ * You will be using this account to keep track of your progression
+ * You can also add the value remember to true and skip this step next time :D
+ */// -> have fun !
