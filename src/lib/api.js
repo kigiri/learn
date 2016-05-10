@@ -1,16 +1,10 @@
 const is = require('lib/is')
 const map = require('lib/map')
+const filter = require('lib/filter')
 const reduce = require('lib/reduce')
 const assignDeep = require('lib/assign-deep')
 
-const failOnWrongType = (key, val) => {
-  if (!is.str(val)) {
-    throw Error(`URL argument ${key} is not a string (type: ${typeof val})`)
-  }
-  return val
-}
-
-const matchVariable = /\/:([^\/]+)/g
+const matchVariable = /(?:(?:\/:)|(?:[?&]))([^\/?&]+)/g
 const toJSON = res => {
   if (res.ok) return res.json()
   throw Object.assign(Error(res.statusText), { res })
@@ -23,15 +17,23 @@ module.exports = (available, baseHeaders, routes) => map(routes, base => {
 
   return args => {
     // prepare url
-    const url = rawUrl.replace(matchVariable, (_, key) => {
+    const url = rawUrl.replace(matchVariable, (src, key) => {
       const idx = key.indexOf('.')
-      return '/'+ failOnWrongType(key, (idx !== -1)
+      const part = (idx !== -1)
         ? available[key.slice(0, idx)][key.slice(idx + 1)]
-        : args[key])
+        : args[key]
+
+      console.log(src, key, part)
+
+      if (!is.str(part)) {
+        throw Error(`URL argument ${key} is not a string (type: ${typeof part})`)
+      }   
+
+      return src[0] === '/' ? ('/'+ part) : (src +'='+ part)
     })
 
     // clone options
-    const options = assignDeep({ headers: baseHeaders }, base)
+    const options = assignDeep({ headers: filter(baseHeaders, is.def) }, base)
 
     // encode body
     if (options.body) {

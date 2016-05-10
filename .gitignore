@@ -51,3 +51,4 @@ Temporary Items
 public/
 node_modules/
 tools/config.js
+npm-debug.log

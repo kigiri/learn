@@ -1,5 +1,5 @@
-const each = require('lib/collection/each')
 const methods = require('lib/emiter/methods')
+const each = require('lib/collection/each')
 const sub = require('lib/emiter/subscribe')
 
 function Observ(value) {
@@ -52,9 +52,16 @@ function ObservFormat(src, format) {
   return src
 }
 
+function ObservImmediate(src, fn) {
+  src(fn)
+  fn(src)
+  return src
+}
+
 Observ.format = ObservFormat
 Observ.check = ObservCheck
 Observ.once = ObservOnce
+Observ.immediate = ObservImmediate
 
 const buildMethod = method => (...args) => {
   const obs = Observ()

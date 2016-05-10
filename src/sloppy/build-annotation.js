@@ -74,7 +74,9 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
 
   let clear
   function getAnnotation(testCode, testCb, opts, testCm) {
-    window.localStorage[sauce()] = userCode
+    if (sauce()) {
+      window.localStorage[sauce()] = userCode
+    }
     clear = null
     try {
       __inUserCode__ = true
@@ -107,8 +109,10 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
     series(work).then(() => {
       // sauce().success(evalResult)
       testCb(apply([]))
+      if (testCode.length) {
+        theCook.say('o', 'Well done !')
+      }
     }).catch(fail)
-      .then(theCook.animate.load.stop)
   }
 
   const throttled = (...args) => {
