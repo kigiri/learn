@@ -1,4 +1,4 @@
-const observ = require('observ')
+const observ = require('lib/emiter/observ')
 const each = require('lib/each')
 const is = require('lib/is')
 

@@ -4,12 +4,10 @@ const { btoa } = require('global/window')
 const state = require('state').observ
 const { config } = state
 
-const BRANCH = 'master'
-const REPO = 'kigiri/sauce'
 const API = 'https://api.github.com'
 
 // this is what i can later access in my urls
-const available = {}
+const _ = {}
 
 // github headers
 const baseHeaders = {
@@ -18,7 +16,7 @@ const baseHeaders = {
 }
 
 const syncConfig = c => {
-  available.config = c
+  _.config = c
 }
 
 config(syncConfig)
@@ -26,17 +24,17 @@ syncConfig(config())
 
 const toText = r => r.text()
 const rawDl = (repo, path) =>
-  fetch(`https://raw.githubusercontent.com/${repo}/${BRANCH}/${path}`)
+  fetch(`https://raw.githubusercontent.com/:config.srcRepo/:config.branch/${path}`)
     .then(toText)
 
-const dl = path => rawDl(available.config.repo, path)
-dl.src = path => rawDl(REPO, path)
+const dl = path => rawDl(_.config.repo, path)
+dl.src = path => rawDl(_.config.srcRepo, path)
 
-const github = api(available, baseHeaders, {
-  fork: { method: 'POST', url: `${API}/repos/${REPO}/forks` },
+const github = api(_, baseHeaders, {
+  fork: { method: 'POST', url: `${API}/repos/:repo/forks` },
   browse: `${API}/repos/:repo/contents/:path`,
   loadUser: `${API}/user`,
-  loadUpstream: `${API}/repos/${REPO}/git/refs/heads/${BRANCH}`,
+  loadUpstream: `${API}/repos/:config.srcRepo/git/refs/heads/:config.branch`,
   update: {
     method: 'PATCH',
     url: `${API}/repos/:config.repo/git/:ref`,
@@ -52,7 +50,7 @@ const github = api(available, baseHeaders, {
       path: String,
       message: String,
       content: content => btoa(String(content)),
-      branch: branch => branch || BRANCH,
+      branch: branch => branch || _.config.branch,
       committer: {
         name: 'Clement Denis',
         email: 'le.mikmac@gmail.com',
@@ -63,21 +61,27 @@ const github = api(available, baseHeaders, {
 
 github.dl = dl
 
+const getProgressPath = () => `${_.config.branch}-${
+  _.config.srcRepo.replace('/', '-')
+}`
+
 // shorthands for known repositories :
-github.browse.exercises = () => github.browse({
-  repo: available.config.repo,
-  path: 'exercises'
+github.browse.progress = () => github.browse({
+  repo: _.config.repo,
+  path: getProgressPath(),
 })
 
 github.browse.exemples = () => github.browse({
-  repo: REPO,
+  repo: _.config.srcRepo,
   path: 'exemples'
 })
 
 github.browse.tests = () => github.browse({
-  repo: REPO,
+  repo: _.config.srcRepo,
   path: 'tests'
 })
+
+github.fork.progress = () => github.fork('kigiri/lambda-love-progress')
 
 github.reset = () => github.loadUpstream()
   .then(us => github.update({ ref: us.ref, sha: us.object.sha }))

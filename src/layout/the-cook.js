@@ -3,6 +3,7 @@ const map = require('lib/collection/map')
 const each = require('lib/collection/each')
 const cook = require('sauce/cook-ascii.txt').split('o')
 
+require('component/the-cook')
 require('./the-cook.css')
 
 const upperPart = cook[0]

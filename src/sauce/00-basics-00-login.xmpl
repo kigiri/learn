@@ -21,6 +21,5 @@ sauce.amount = amount
 /* Your turn : declare a variable user, assign it to an object with the values
  * login and password
  * You must set a valid Github login and password.
- * You will be using this account to keep track of your progression
- * You can also add the value remember to true and skip this step next time :D
+ * You will be using this repo to keep track of your progression
  */// -> have fun !

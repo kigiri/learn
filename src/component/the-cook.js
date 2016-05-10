@@ -13,8 +13,6 @@ const conf = observables.config
 
 const defaultDelay = 1000
 
-cookProps(wesh)
-
 const setProps = props => {
   const previousProps = cookProps()
   const newProps = Object.assign({}, previousProps, props)
@@ -24,18 +22,10 @@ const setProps = props => {
   }
 }
 
-const applyProps = reduce((acc, props) => {
-  acc.delay += props.delay || defaultDelay
-
-  acc.timeouts.push(setTimeout(() => setProps(props), acc.delay))
-
-  return acc
-})
-
 const clearEach = each(clearTimeout)
 
 let playing = false
-let timeouts
+let timeouts = []
 let messageDurationStack = 0
 const clearMessageStack = () => {
   messageDurationStack = 0
@@ -43,25 +33,42 @@ const clearMessageStack = () => {
   clearEach(timeouts)
 }
 
+const applyProps = reduce((acc, props, i) => {
+  acc.totalWait += acc.wait
+  acc.wait = props.delay || defaultDelay
+
+  if (!i) {
+    setProps(props)
+  } else {
+    timeouts.push(setTimeout(() => setProps(props), acc.totalWait))  
+  }
+
+  return acc
+})
+
+
 const animate = props => {
   const state = {
     loop: () => {
       const loop = () => {
         if (state.play === playing) {
+          playing = false
           return state.play().then(loop)
         }
       }
       state.play().then(loop)
+      return state
     },
     play: () => {
+      if (playing === state.play) return Promise.resolve()
       clearMessageStack()
       playing = state.play
       const d = applyProps(props, {
         timeouts: [],
-        delay: 0,
+        totalWait: 0,
+        wait: 0,
       })
-      timeouts = d.timeouts
-      return new Promise(res => setTimeout(res, d.delay))
+      return new Promise(res => setTimeout(res, d.totalWait + d.wait))
     },
     stop: clearMessageStack
   }
@@ -100,11 +107,14 @@ const linkedMessages = {
 }
 
 animate.load = animate([
-  { eye: '.', message: 'waiting on the api -..' },
-  { eye: 'o', message: 'waiting on the api -..' },
-  { eye: 'O', message: 'waiting on the api .-.' },
-  { eye: '@', message: 'waiting on the api ..-' },
-  { eye: '*', message: 'waiting on the api .-.' },
+  { eye: '|',  message: 'Loading -....', delay: 150 },
+  { eye: '/',  message: 'Loading .-...', delay: 150 },
+  { eye: '-',  message: 'Loading ..-..', delay: 150 },
+  { eye: '\\', message: 'Loading ...-.', delay: 150 },
+  { eye: '|',  message: 'Loading ....-', delay: 150 },
+  { eye: '/',  message: 'Loading ...-.', delay: 150 },
+  { eye: '-',  message: 'Loading ..-..', delay: 150 },
+  { eye: '\\', message: 'Loading .-...', delay: 150 },
 ])
 
 
@@ -113,9 +123,10 @@ animate.smile = animate([
   { eye: 'o' },
 ])
 
-animate.load.loop()
 
 window.animate = animate
 window.say = theCookSay
+
+setTimeout(animate.load.loop, 350)
 
 module.exports = { animate, say: theCookSay }

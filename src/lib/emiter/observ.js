@@ -9,6 +9,7 @@ function Observ(value) {
   subscriber.set = val => {
     value = val
     each(fn => fn(val), listeners)
+    return val
   }
 
   return subscriber
@@ -24,6 +25,7 @@ function ObservCheck(value, check) {
     if (!check(val, value)) return
     value = val
     each(fn => fn(val), listeners)
+    return val
   }
 
   subscriber.setCheck = newCheck => check = newCheck
@@ -44,6 +46,13 @@ function ObservOnce() {
   return subscriber
 }
 
+function ObservFormat(src, format) {
+  const set = src.set
+  src.set = val => set(format(val))
+  return src
+}
+
+Observ.format = ObservFormat
 Observ.check = ObservCheck
 Observ.once = ObservOnce
 
