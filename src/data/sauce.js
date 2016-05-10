@@ -2,13 +2,13 @@ const observables = require('state').observ
 const inRange = require('lib/arr').inRange
 const find = require('lib/find')
 
-const exos = observables.exercises
+const exemples = observables.exemples
 const conf = observables.config
 
 let currentIdx = 0
 let saucelist = []
 
-exos(val => saucelist = Object.keys(val))
+exemples(val => saucelist = Object.keys(val))
 
 observables.sauce(sauce => window.localStorage.sauce = sauce)
 

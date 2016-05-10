@@ -8,7 +8,6 @@ const find = require('lib/find')
 const arr = require('lib/arr')
 
 const cookProps = observables.cookProps
-const exos = observables.exercises
 const conf = observables.config
 
 const defaultDelay = 1000
@@ -127,6 +126,13 @@ animate.smile = animate([
 window.animate = animate
 window.say = theCookSay
 
-setTimeout(animate.load.loop, 350)
+setTimeout(animate.load.loop)
 
-module.exports = { animate, say: theCookSay }
+module.exports = {
+  animate,
+  say: theCookSay,
+  greet: (force) => {
+    theCookSay('o', greet(), force === true)
+    return animate.smile.play()
+  },
+}

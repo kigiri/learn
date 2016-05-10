@@ -54,7 +54,7 @@ function ObservFormat(src, format) {
 
 function ObservImmediate(src, fn) {
   src(fn)
-  fn(src)
+  fn(src())
   return src
 }
 

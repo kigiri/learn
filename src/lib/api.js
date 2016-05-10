@@ -29,7 +29,7 @@ module.exports = (available, baseHeaders, routes) => map(routes, base => {
         throw Error(`URL argument ${key} is not a string (type: ${typeof part})`)
       }   
 
-      return src[0] === '/' ? ('/'+ part) : (src +'='+ part)
+      return src[0] === '/' ? (`/${part}`) : (`${src}=${part}`)
     })
 
     // clone options

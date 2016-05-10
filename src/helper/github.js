@@ -24,9 +24,12 @@ config(syncConfig)
 syncConfig(config())
 
 const toText = r => r.text()
-const rawDl = (repo, path) =>
-  fetch(`https://raw.githubusercontent.com/:config.srcRepo/:config.branch/${path}`)
-    .then(toText)
+const rawDl = (repo, path) => {
+  const url = `https://raw.githubusercontent.com/${repo}/${_.config.branch}/${path}`
+
+  console.log(url)
+  return fetch(url).then(toText)
+}
 
 const dl = path => rawDl(_.config.repo, path)
 dl.src = path => rawDl(_.config.srcRepo, path)
@@ -66,6 +69,16 @@ const getProgressPath = () => wesh(`${_.config.branch}-${
   _.config.srcRepo.replace('/', '-')
 }`)
 
+github.dl.progress = name => dl(`${getProgressPath()}/${name}`)
+github.dl.exemples = name => dl.src(`exemples/${name}`)
+github.dl.test = name => dl.src(`tests/${name}`)
+
+github.dl.all = name => Promise.all([
+  github.dl.test(name),
+  github.dl.exemples(name),
+  // github.dl.progress(name).catch(err => github.dl.exemples(name)),
+])
+
 // shorthands for known repositories :
 github.browse.progress = () => github.browse({
   repo: _.config.repo,
@@ -91,7 +104,11 @@ github.reset = () => github.loadUpstream()
   .then(us => github.update({ ref: us.ref, sha: us.object.sha }))
 
 github.verifyUser = user => {
-  baseHeaders.Authorization = 'Basic '+ btoa(user.login +':'+ user.password)
+  if (!user) {
+    if (!baseHeaders.Authorization) return Promise.reject(Error('404'))
+  } else {
+    baseHeaders.Authorization = 'Basic '+ btoa(user.login +':'+ user.password)
+  }
   return github.loadUser().then(config.update)
 }
 

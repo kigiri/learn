@@ -4,6 +4,7 @@ const event = require('lib/event')
 const assignDeep = require('lib/assign-deep')
 const window = require('global/window')
 const hash = require('lib/hash')
+const defaults = require('data/defaults')
 
 const config = observ({})
 
@@ -12,8 +13,8 @@ config.update = newConf => config.set(assignDeep(config(), newConf))
 const updateConf = () => {
   const [ user, repo, branch ] = hash.parts()
   config.update({
-    branch: branch || 'basic',
-    srcRepo: (user || 'kigiri') +'/'+ (repo || 'learn'),
+    branch: branch || defaults.branch,
+    srcRepo: (user || defaults.user) +'/'+ (repo || defaults.repo),
   })
 }
 
@@ -25,7 +26,8 @@ const state = {
   config,
   split: observ.check(0.5),
   codeMirror: observ(null),
-  exercises: observ({}),
+  exemples: observ({}),
+  progress: observ(''),
   tests: observ({}),
   test: observ(''),
   sauce: observ.check(''),
