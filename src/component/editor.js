@@ -2,7 +2,8 @@ const h = require('lib/h')
 const keyDown = require('lib/event')
 const display = require('component/terminal-display')
 const ev = require('geval/event')
-const editor = require('helper/init-code-mirror')('editor')
+const { progress } = require('state').observ
+const editor = require('helper/init-code-mirror')('editor', progress)
 
 require('lib/code-mirror')
 require('style/code-mirror.css')
@@ -22,7 +23,6 @@ const render = state => {
       inputStyle: 'contenteditable',
       rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
       keyMap: 'sublime',
-      value: state.progress || '',
       lintOnChange: true,
     })
     setTimeout(() => cm.setOption("lint", {

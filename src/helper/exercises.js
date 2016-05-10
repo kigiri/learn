@@ -24,7 +24,6 @@ immediate(state.sauce, sauce => {
   if (!sauce) return
   github.dl.all(wesh(sauce, 'HOT SAUCE'))
   .then(([ test, progress ]) => {
-    console.log({ test, progress })
     state.test.set(test)
     state.progress.set(progress)
   })
@@ -35,7 +34,7 @@ const loadRepo = repo => {
   hash.set(repo)
   return github.browse.tests().then(tests => {
     state.tests.set(mapFromName(tests))
-    state.sauce.set(tests[0].name)
+    state.sauce.set(tests[1].name)
     console.log(state.tests())
     const { srcRepo, branch } = state.config()
     theCook.greet(true)

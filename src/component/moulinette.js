@@ -1,6 +1,6 @@
 const buildAnnotation = require('sloppy/build-annotation')
 const observables = require('state').observ
-const moulinette = require('helper/init-code-mirror')('moulinette')
+const moulinette = require('helper/init-code-mirror')('moulinette', observables.test)
 const editor = require('component/editor')
 const greet = require('helper/greet')
 const cook = require('layout/the-cook')
@@ -21,7 +21,7 @@ const applyCook = annotations => {
 
 const render = state => {
   if (state.codeMirror && !moulinette.loaded) {
-    const cm = moulinette(state.codeMirror, { value: state.test })
+    const cm = moulinette(state.codeMirror)
 
     clearEval()
     editor.eval(args => cm.setOption("lint", {

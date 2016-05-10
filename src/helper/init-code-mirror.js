@@ -6,12 +6,16 @@ function cleanup(id) {
   prevElem && prevElem.firstChild && prevElem.firstChild.remove()
 }
 
-module.exports = id => {
+module.exports = (id, obs) => {
   const init =  (cm, extendConfig) => {
     init.loaded = true
     cleanup(id)
     const el = document.getElementById(id)
-    return cm(el, defaultConf(extendConfig))
+    const conf = defaultConf(extendConfig)
+    conf.value = obs() || ''
+    const editor = cm(el, conf)
+    obs(val => editor.getDoc().setValue(val))
+    return editor
   }
 
   init.loaded = false
