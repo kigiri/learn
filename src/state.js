@@ -10,8 +10,16 @@ const config = observ({})
 
 config.update = newConf => config.set(assignDeep(config(), newConf))
 
+const exercise = observ.check('')
+
 const updateConf = () => {
-  const [ user, repo, branch ] = hash.parts()
+  const [ user, repo, branch, ex ] = hash.parts()
+  const prevEx = exercise()
+  if (prevEx !== ex) {
+    if (prevEx) return hash.set(`${user}/${repo}/${branch}/${prevEx}/`)
+    exercise.set(ex)
+  }
+
   config.update({
     branch: branch || defaults.branch,
     srcRepo: (user || defaults.user) +'/'+ (repo || defaults.repo),
@@ -23,6 +31,7 @@ hash(updateConf)
 updateConf()
 
 const state = {
+  exercise,
   config,
   split: observ.check(0.5),
   codeMirror: observ(null),
@@ -30,7 +39,6 @@ const state = {
   progress: observ(''),
   tests: observ({}),
   test: observ(''),
-  sauce: observ.check(''),
   cookProps: observ({ eye: '-', message: 'Loading .....' }),
   _hotVersion: observ(0),
   viewHeight: event.viewHeight,

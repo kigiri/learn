@@ -1,4 +1,4 @@
-// LOAD github sauce
+// LOAD github exercise
 const state = require('state').observ
 const passError = require('lib/err')
 const github = require('helper/github')
@@ -18,11 +18,11 @@ window.cmd = {
 }
 
 // load tests
-state.progress(val => window.localStorage[state.sauce()] = val)
+state.progress(val => window.localStorage[state.exercise()] = val)
 
-immediate(state.sauce, sauce => {
-  if (!sauce) return
-  github.dl.all(wesh(sauce, 'HOT SAUCE'))
+immediate(state.exercise, exercise => {
+  if (!exercise) return
+  github.dl.all(wesh(exercise, 'HOT exercise'))
   .then(([ test, progress ]) => {
     state.test.set(test)
     state.progress.set(progress)
@@ -34,7 +34,7 @@ const loadRepo = repo => {
   hash.set(repo)
   return github.browse.tests().then(tests => {
     state.tests.set(mapFromName(tests))
-    state.sauce.set(tests[1].name)
+    state.exercise.set(tests[1].name)
     console.log(state.tests())
     const { srcRepo, branch } = state.config()
     theCook.greet(true)

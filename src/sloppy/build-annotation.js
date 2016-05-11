@@ -8,7 +8,7 @@ const map = require('lib/collection/map')
 const api = require('helper/github')
 const is = require('lib/is')
 
-const sauce = observables.sauce
+const exercise = observables.exercise
 let index = 0
 const validator = bool => valid => {
   index++
@@ -74,8 +74,8 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
 
   let clear
   function getAnnotation(testCode, testCb, opts, testCm) {
-    if (sauce()) {
-      window.localStorage[sauce()] = userCode
+    if (exercise()) {
+      window.localStorage[exercise()] = userCode
     }
     clear = null
     try {
@@ -107,7 +107,7 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
 
     theCook.animate.load.loop()
     series(work).then(() => {
-      // sauce().success(evalResult)
+      // exercise().success(evalResult)
       testCb(apply([]))
       if (testCode.length) {
         theCook.say('o', 'Well done !')

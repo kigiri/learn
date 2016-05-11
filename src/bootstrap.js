@@ -1,7 +1,7 @@
 const document = require('global/document')
 const app = require('lib/app')
 const state = require('state')
-const sauce = require('data/sauce')
+const exercise = require('data/exercise')
 
 require('style/spinner.css')
 require('style/pure.css')

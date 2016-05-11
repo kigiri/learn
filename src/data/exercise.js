@@ -6,17 +6,17 @@ const exemples = observables.exemples
 const conf = observables.config
 
 let currentIdx = 0
-let saucelist = []
+let exerciselist = []
 
-exemples(val => saucelist = Object.keys(val))
+exemples(val => exerciselist = Object.keys(val))
 
-observables.sauce(sauce => window.localStorage.sauce = sauce)
+observables.exercise(exercise => window.localStorage.exercise = exercise)
 
 const load = idx => {
-  const newIdx = inRange(saucelist, idx)
+  const newIdx = inRange(exerciselist, idx)
   if (newIdx === currentIdx) return
   currentIdx = idx
-  observables.sauce.set(saucelist[currentIdx])
+  observables.exercise.set(exerciseList[currentIdx])
 }
 
 module.exports = {
