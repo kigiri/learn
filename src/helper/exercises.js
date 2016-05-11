@@ -4,12 +4,25 @@ const passError = require('lib/err')
 const github = require('helper/github')
 const hash = require('lib/hash')
 const store = require('lib/store')
+const reduce = require('lib/collection/reduce')
 const { immediate } = require('lib/emiter/observ')
 const theCook = require('component/the-cook')
 const defaults = require('data/defaults')
-const arrayToMap = key => arr => store(arr, (acc, val) => acc[val[key]] = val)
+const chaininfy = reduce((prev, next) => {
+  prev.next = next
+  next.prev = prev
+  return next
+})
 
-const mapFromName = arrayToMap('name')
+const prepareFiles = arr => {
+  const files = store(arr, (acc, val) => acc[val.name] = val)
+
+  files.__first__ = arr[0]
+  files.__last__ = chaininfy(files)
+  files.__arr__ = arr
+
+  return files
+}
 
 window.cmd = {
   showExercise: () => {},
@@ -18,24 +31,31 @@ window.cmd = {
 }
 
 // load tests
-state.progress(val => window.localStorage[state.exercise()] = val)
-
-immediate(state.exercise, exercise => {
-  if (!exercise) return
-  github.dl.all(wesh(exercise, 'HOT exercise'))
-  .then(([ test, progress ]) => {
+immediate(state.exercise, ex => {
+  if (!ex) return
+  const hashParts = hash.parts()
+  const hashEx = hashParts[3]
+  if (!hashEx || hashEx !== ex) {
+    hashParts[3] = ex
+    hash.set(hashParts.join('/'))
+  }
+  if (window.localStorage[ex]) {
+    return github.dl.test(ex).then(state.test.set)
+  }
+  github.dl.all(ex).then(([ test, progress ]) => {
     state.test.set(test)
     state.progress.set(progress)
   })
 })
 
 // load repo
+let _prevRepo
 const loadRepo = repo => {
+  _prevRepo = repo
   hash.set(repo)
   return github.browse.tests().then(tests => {
-    state.tests.set(mapFromName(tests))
-    state.exercise.set(tests[1].name)
-    console.log(state.tests())
+    state.tests.set(prepareFiles(tests))
+    state.exercise.set(tests[0].name)
     const { srcRepo, branch } = state.config()
     theCook.greet(true)
   }).catch(err => {
@@ -47,9 +67,10 @@ const loadRepo = repo => {
   })
 }
 
-immediate(hash, h => {
-  const { srcRepo, branch } = state.config()
+immediate(state.config, ({ srcRepo, branch }) => {
   const repo = `${srcRepo}/${branch}`
+
+  if (_prevRepo === repo) return
 
   if (branch === defaults.branch && srcRepo === defaults.srcRepo) {
     return loadRepo(repo)

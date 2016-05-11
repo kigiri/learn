@@ -5,17 +5,25 @@ const assignDeep = require('lib/assign-deep')
 const window = require('global/window')
 const hash = require('lib/hash')
 const defaults = require('data/defaults')
-
+const local = window.localStorage
 const config = observ({})
+const progress = observ('')
 
 config.update = newConf => config.set(assignDeep(config(), newConf))
 
-const exercise = observ.check('')
+const exercise = observ.check(local.exercise)
 
-const updateConf = () => {
+observ.immediate(exercise, ex => {
+  local.exercise = ex
+  progress.set(local[ex])
+})
+
+observ.immediate(hash, () => {
   const [ user, repo, branch, ex ] = hash.parts()
   const prevEx = exercise()
-  if (prevEx !== ex) {
+  if (!ex) {
+    if (prevEx) return hash.set(`${user}/${repo}/${branch}/${prevEx}/`)
+  } else if (prevEx !== ex) {
     if (prevEx) return hash.set(`${user}/${repo}/${branch}/${prevEx}/`)
     exercise.set(ex)
   }
@@ -24,19 +32,15 @@ const updateConf = () => {
     branch: branch || defaults.branch,
     srcRepo: (user || defaults.user) +'/'+ (repo || defaults.repo),
   })
-}
-
-hash(updateConf)
-
-updateConf()
+})
 
 const state = {
-  exercise,
   config,
+  exercise,
+  progress,
   split: observ.check(0.5),
   codeMirror: observ(null),
   exemples: observ({}),
-  progress: observ(''),
   tests: observ({}),
   test: observ(''),
   cookProps: observ({ eye: '-', message: 'Loading .....' }),

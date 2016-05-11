@@ -107,7 +107,9 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
 
     theCook.animate.load.loop()
     series(work).then(() => {
-      // exercise().success(evalResult)
+      const next = observables.tests()[exercise()].next
+      console.log('should load next:', next)
+      exercise().success(evalResult)
       testCb(apply([]))
       if (testCode.length) {
         theCook.say('o', 'Well done !')
