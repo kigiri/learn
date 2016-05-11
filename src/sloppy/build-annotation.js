@@ -7,6 +7,7 @@ const count = require('lib/count')
 const map = require('lib/collection/map')
 const api = require('helper/github')
 const is = require('lib/is')
+const debugTestCode = require('sauce/test.xmpl')
 
 const exercise = observables.exercise
 let index = 0

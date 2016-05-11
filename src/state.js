@@ -15,16 +15,21 @@ const exercise = observ.check(local.exercise)
 
 observ.immediate(exercise, ex => {
   local.exercise = ex
-  progress.set(local[ex] || '')
+  progress.set(local[ex])
 })
+
+const setUrlDefault = (user, repo, branch, ex) => hash.set(
+  `${ user || defaults.user
+  }/${ repo || defaults.repo
+  }/${ branch || defaults.branch }/${ex}/`)
 
 observ.immediate(hash, () => {
   const [ user, repo, branch, ex ] = hash.parts()
   const prevEx = exercise()
   if (!ex) {
-    if (prevEx) return hash.set(`${user}/${repo}/${branch}/${prevEx}/`)
+    if (prevEx) return setUrlDefault(user, repo, branch, prevEx)
   } else if (prevEx !== ex) {
-    if (prevEx) return hash.set(`${user}/${repo}/${branch}/${prevEx}/`)
+    if (prevEx) return setUrlDefault(user, repo, branch, prevEx)
     exercise.set(ex)
   }
 
@@ -34,7 +39,11 @@ observ.immediate(hash, () => {
   })
 })
 
+window.reloadDebug = (val) => val && test.set(val)
+const test = observ('')
+
 const state = {
+  test,
   config,
   exercise,
   progress,
@@ -42,7 +51,6 @@ const state = {
   codeMirror: observ(null),
   exemples: observ({}),
   tests: observ({}),
-  test: observ(''),
   cookProps: observ({ eye: '-', message: 'Loading .....' }),
   _hotVersion: observ(0),
   viewHeight: event.viewHeight,

@@ -84,7 +84,10 @@ immediate(state.config, ({ srcRepo, branch }) => {
   if (_prevRepo === repo) return
 
   if (branch === defaults.branch && srcRepo === defaults.srcRepo) {
-    return loadRepo(repo)
+    return loadRepo(repo).catch(err => {
+      delete window.localStorage.user
+      return loadRepo(repo)
+    })
   }
 
   return github.loadUser().then(user => {

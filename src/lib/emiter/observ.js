@@ -33,6 +33,21 @@ function ObservCheck(value, check) {
   return subscriber
 }
 
+const defaultGetter = a => a
+function ObservGet(value, getter) {
+  const listeners = []
+  getter || (getter = defaultGetter)
+  const subscriber = fn => sub(listeners, fn, value)
+
+  subscriber.set = val => {
+    const value = getter(val)
+    each(fn => fn(value), listeners)
+    return val
+  }
+
+  return subscriber
+}
+
 function ObservOnce() {
   let listeners = []
   const subscriber = fn => sub(listeners, fn)
@@ -58,10 +73,11 @@ function ObservImmediate(src, fn) {
   return src
 }
 
+Observ.immediate = ObservImmediate
 Observ.format = ObservFormat
 Observ.check = ObservCheck
 Observ.once = ObservOnce
-Observ.immediate = ObservImmediate
+Observ.get = ObservGet
 
 const buildMethod = method => (...args) => {
   const obs = Observ()
