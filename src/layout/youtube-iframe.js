@@ -9,8 +9,6 @@ const iframe = h.curry('iframe', {
   }
 })
 
-require('./youtube-iframe.css')
-
 const render = props => {
   const query = []
 

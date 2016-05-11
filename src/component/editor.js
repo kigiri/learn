@@ -6,7 +6,6 @@ const { progress } = require('state').observ
 const editor = require('helper/init-code-mirror')('editor', progress)
 
 require('lib/code-mirror')
-require('style/code-mirror.css')
 
 const evalEvent = ev()
 

@@ -1,8 +1,6 @@
 const defaults = require('lib/default');
 const p = require('layout/pure');
 
-require('./modal.css');
-
 
 const defaultsProps = {
   'ev-keydown': ev => console.log(ev)

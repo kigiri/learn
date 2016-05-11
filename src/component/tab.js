@@ -7,8 +7,6 @@ const mouse = observ.join({ x: domEv.mouseX, y: domEv.mouseY })
 const drag = observ.pausable(domEv.lbtn, mouse)
 const map = require('lib/collection/map')
 
-require('layout/tab.css')
-
 // drag(wesh)
 
 const remove = require('lib/arr')

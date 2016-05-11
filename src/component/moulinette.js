@@ -7,8 +7,6 @@ const cook = require('layout/the-cook')
 const theCook = require('component/the-cook')
 const h = require('lib/h')
 
-require('layout/moulinette.css')
-
 const wrap = h.curry('#moulinette-wrapper')
 
 const clearEval = editor.eval(args => args.cb([]))

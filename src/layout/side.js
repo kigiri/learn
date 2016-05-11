@@ -1,8 +1,6 @@
 const h = require('lib/h');
 const calcWidth = require('helper/calc-width')
 
-require('./side.css');
-
 const rightSide = h.curry('.right-side').style;
 const leftSide = h.curry('.left-side').style;
 
