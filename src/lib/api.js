@@ -10,7 +10,12 @@ const toJSON = res => {
   throw Object.assign(Error(res.statusText), { res })
 }
 
-module.exports = (available, baseHeaders, routes) => map(routes, base => {
+const toText = res => {
+  if (res.ok) return res.text()
+  throw Object.assign(Error(res.statusText), { res })
+}
+
+const api = (available, baseHeaders, routes) => map(routes, base => {
   const rawUrl = is.str(base) ? base : base.url
 
   baseHeaders['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -44,3 +49,4 @@ module.exports = (available, baseHeaders, routes) => map(routes, base => {
   }
 })
 
+module.exports = Object.assign(api, { toText, toJSON })

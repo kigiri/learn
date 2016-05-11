@@ -31,6 +31,7 @@ const applyChainStack = reduce((q, e) => q.then(e.s, e.f))
 
 function buildAnnotation(userCode, editorCm, editorCb, apply) {
   "use strict"
+  if (!userCode) return
   const work = [ Promise.resolve() ]
   let __inUserCode__ = true
 
@@ -74,6 +75,8 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
 
   let clear
   function getAnnotation(testCode, testCb, opts, testCm) {
+    if (!testCode) return
+
     if (exercise()) {
       window.localStorage[exercise()] = userCode
     }
@@ -107,10 +110,12 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
 
     theCook.animate.load.loop()
     series(work).then(() => {
-      const next = observables.tests()[exercise()].next
-      console.log('should load next:', next)
-      exercise().success(evalResult)
-      testCb(apply([]))
+      console.log(observables.tests())
+      const ex = observables.tests()[exercise()]
+      if (ex && ex.next) {
+        exercise.set(ex.next.name)
+      }
+!      testCb(apply([]))
       if (testCode.length) {
         theCook.say('o', 'Well done !')
       }

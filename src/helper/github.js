@@ -1,3 +1,4 @@
+const is = require('lib/is')
 const api = require('lib/api')
 const assignDeep = require('lib/assign-deep')
 const { btoa } = require('global/window')
@@ -23,13 +24,12 @@ const syncConfig = c => _.config = c
 config(syncConfig)
 syncConfig(config())
 
-const toText = r => r.text()
 const rawDl = (repo, path) => fetch([
   'https://raw.githubusercontent.com',
   repo,
   _.config.branch,
   path,
-].join('/')).then(toText)
+].join('/')).then(api.toText)
 
 const dl = path => rawDl(_.config.repo, path)
 dl.src = path => rawDl(_.config.srcRepo, path)
@@ -65,19 +65,16 @@ const github = api(_, baseHeaders, {
 
 github.dl = dl
 
-const getProgressPath = () => wesh(`${_.config.branch}-${
+const getProgressPath = () => `${_.config.branch}-${
   _.config.srcRepo.replace('/', '-')
-}`)
+}`
 
-github.dl.progress = name => dl(`${getProgressPath()}/${name}`)
-github.dl.exemples = name => dl.src(`exemples/${name}`)
+
 github.dl.test = name => dl.src(`tests/${name}`)
+github.dl.progress = name => is.undef(_.config.repo)
+  ? dl.src(`exemples/${name}`)
+  : dl(`${getProgressPath()}/${name}`).catch(err => dl.src(`exemples/${name}`))
 
-github.dl.all = name => Promise.all([
-  github.dl.test(name),
-  github.dl.exemples(name),
-  // github.dl.progress(name).catch(err => github.dl.exemples(name)),
-])
 
 // shorthands for known repositories :
 github.browse.progress = () => github.browse({

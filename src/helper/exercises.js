@@ -39,13 +39,11 @@ immediate(state.exercise, ex => {
     hashParts[3] = ex
     hash.set(hashParts.join('/'))
   }
-  if (window.localStorage[ex]) {
-    return github.dl.test(ex).then(state.test.set)
+  
+  if (!window.localStorage[ex]) {
+    github.dl.progress(ex).then(state.progress.set)
   }
-  github.dl.all(ex).then(([ test, progress ]) => {
-    state.test.set(test)
-    state.progress.set(progress)
-  })
+  github.dl.test(ex).then(state.test.set)
 })
 
 // load repo
