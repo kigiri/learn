@@ -24,12 +24,12 @@ config(syncConfig)
 syncConfig(config())
 
 const toText = r => r.text()
-const rawDl = (repo, path) => {
-  const url = `https://raw.githubusercontent.com/${repo}/${_.config.branch}/${path}`
-
-  console.log(url)
-  return fetch(url).then(toText)
-}
+const rawDl = (repo, path) => fetch([
+  'https://raw.githubusercontent.com',
+  repo,
+  _.config.branch,
+  path,
+].join('/')).then(toText)
 
 const dl = path => rawDl(_.config.repo, path)
 dl.src = path => rawDl(_.config.srcRepo, path)

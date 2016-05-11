@@ -23,8 +23,6 @@ module.exports = (available, baseHeaders, routes) => map(routes, base => {
         ? available[key.slice(0, idx)][key.slice(idx + 1)]
         : args[key]
 
-      console.log(src, key, part)
-
       if (!is.str(part)) {
         throw Error(`URL argument ${key} is not a string (type: ${typeof part})`)
       }   
