@@ -14,6 +14,16 @@ const chaininfy = reduce((prev, next) => {
   return next
 })
 
+const __load = key => {
+  const ex = state.tests()[state.exercise()]
+  if (ex && ex[key]) {
+    state.exercise.set(ex[key].name)
+  }
+}
+
+const loadNext = () => __load('next')
+const loadPrev = () => __load('prev')
+
 const prepareFiles = arr => {
   const files = store(arr, (acc, val) => acc[val.name] = val)
 
@@ -24,11 +34,12 @@ const prepareFiles = arr => {
   return files
 }
 
-window.cmd = {
-  showExercise: () => {},
+Object.assign(window, {
+  skipExercise: loadNext,
   login: (login, password) => github.verifyUser({ login, password }),
+  loadExercise: state.exercise.set,
   load: hash.set,
-}
+})
 
 // load tests
 immediate(state.exercise, ex => {
@@ -116,3 +127,8 @@ immediate(state.config, ({ srcRepo, branch }) => {
 //   .catch(err => theCook.say('X', 'initialization problem: '
 //     + (err.code || err.message)), true)
 
+
+module.exports = {
+  next: loadNext,
+  prev: loadPrev,
+}

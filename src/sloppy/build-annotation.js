@@ -43,7 +43,6 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
     const stack = []
     work.push(() => applyChainStack(stack, fn(data))
       .catch(e => {
-        console.dir(e.res)
         const { status, url } = e.res
         err.message = `Github API ${url.slice(22)}: ${status} - ${e.message}`
         throw err
@@ -110,7 +109,6 @@ function buildAnnotation(userCode, editorCm, editorCb, apply) {
 
     theCook.animate.load.loop()
     series(work).then(() => {
-      console.log(observables.tests())
       const ex = observables.tests()[exercise()]
       if (ex && ex.next) {
         exercise.set(ex.next.name)
