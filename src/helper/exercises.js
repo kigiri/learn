@@ -64,7 +64,9 @@ const loadRepo = repo => {
   hash.set(repo)
   return github.browse.tests().then(tests => {
     state.tests.set(prepareFiles(tests))
-    state.exercise.set(tests[0].name)
+    if (!state.exercise()) {
+      state.exercise.set(tests[0].name)
+    }
     const { srcRepo, branch } = state.config()
     theCook.greet(true)
   }).catch(err => {

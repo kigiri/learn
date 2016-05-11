@@ -15,7 +15,7 @@ const exercise = observ.check(local.exercise)
 
 observ.immediate(exercise, ex => {
   local.exercise = ex
-  progress.set(local[ex])
+  progress.set(local[ex] || '')
 })
 
 observ.immediate(hash, () => {
