@@ -14,8 +14,8 @@ const _ = {}
 // github headers
 const baseHeaders = {
   Accept: 'application/vnd.github.v3+json',
-  Authorization: window.localStorage.user
-    ? ('Basic '+ window.localStorage.user)
+  Authorization: window.localStorage.__ID__
+    ? ('Basic '+ window.localStorage.__ID__)
     : undefined
 }
 
@@ -56,8 +56,8 @@ const github = api(_, baseHeaders, {
       content: content => btoa(String(content)),
       branch: branch => branch || _.config.branch,
       committer: {
-        name: 'Clement Denis',
-        email: 'le.mikmac@gmail.com',
+        name: 'Lambda Lover',
+        email: 'me@lambda.love',
       },
     },
   },
@@ -65,16 +65,21 @@ const github = api(_, baseHeaders, {
 
 github.dl = dl
 
-const getProgressPath = () => `${_.config.branch}-${
+const getProgressPath = (name) => `${_.config.branch}-${
   _.config.srcRepo.replace('/', '-')
-}`
+}/${name || ''}`
 
 
 github.dl.test = name => dl.src(`tests/${name}`)
 github.dl.progress = name => is.undef(_.config.repo)
   ? dl.src(`exemples/${name}`)
-  : dl(`${getProgressPath()}/${name}`).catch(err => dl.src(`exemples/${name}`))
+  : dl(getProgressPath(name)).catch(err => dl.src(`exemples/${name}`))
 
+github.create.progress = (filename, content) => github.create({
+  path: getProgressPath(filename),
+  message: 'Init progress for ex '+ filename,
+  content: content || '',
+})
 
 // shorthands for known repositories :
 github.browse.progress = () => github.browse({
@@ -95,16 +100,19 @@ github.browse.tests = () => github.browse({
   path: 'tests'
 })
 
-github.fork.progress = () => github.fork('kigiri/lambda-love-progress')
+github.fork.progress = () => github.fork({ repo: 'kigiri/lambda-love-progress'})
 
 github.reset = () => github.loadUpstream()
   .then(us => github.update({ ref: us.ref, sha: us.object.sha }))
 
 github.verifyUser = user => {
-  if (!user) {
+  if (!user || !user.login) {
     if (!baseHeaders.Authorization) return Promise.reject(Error('404'))
+    console.log('!', user, baseHeaders.Authorization)
   } else {
-    baseHeaders.Authorization = 'Basic '+ btoa(user.login +':'+ user.password)
+    const id = btoa(user.login +':'+ user.password)
+    window.localStorage.__ID__ = id
+    baseHeaders.Authorization = 'Basic '+ id
   }
   return github.loadUser().then(config.update)
 }

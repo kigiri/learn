@@ -34,12 +34,47 @@ const prepareFiles = arr => {
   return files
 }
 
+let progressFiles = {}
 Object.assign(window, {
-  skipExercise: loadNext,
-  login: (login, password) => github.verifyUser({ login, password }),
+  github: {
+    raw: github,
+    logout: () => delete window.localStorage.__ID__,
+    login: (login, password) => {
+      if (!login) {
+        if (!window.localStorage.__ID__) {
+          return console.warn('You must enter a username')
+        }
+      } else if (!password) {
+        password = prompt('Enter you github password')
+      }
+      github.verifyUser({ login, password }).then(github.fork.progress)
+        .then(repo => {
+          state.config.update({ repo: repo.full_name })
+          console.log('yolo', repo, state.config())
+          console.log('You are successfully logged in, using repo',
+            repo.full_name)
+          // return github.browse.progress().catch(err => {
+            // console.log('Uh oh, creating ?', err)
+            return github.create.progress(state.exercise(), '')
+              .then(ex => wesh([ ex.content ]))
+            // })
+        }).then(files => {
+          progressFiles = prepareFiles(files)
+          console.log('progress restaured !, jumping to exercise',
+            progressFiles.__last__.name)
+          state.exercise.set(progressFiles.__last__)
+        })
+    },
+  },
+  commit: msg => {},
   loadExercise: state.exercise.set,
   load: hash.set,
 })
+
+
+if (window.localStorage.__ID__) {
+  window.github.login()
+}
 
 // load tests
 immediate(state.exercise, ex => {

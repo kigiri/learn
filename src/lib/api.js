@@ -16,7 +16,13 @@ const toText = res => {
 }
 
 const api = (available, baseHeaders, routes) => map(routes, base => {
-  const rawUrl = is.str(base) ? base : base.url
+  let rawUrl
+  if (is.str(base)) {
+    rawUrl = base
+    base = null
+  } else {
+    rawUrl = base.url
+  }
 
   baseHeaders['Content-Type'] = 'application/x-www-form-urlencoded'
 
@@ -36,7 +42,12 @@ const api = (available, baseHeaders, routes) => map(routes, base => {
     })
 
     // clone options
-    const options = assignDeep({ headers: filter(baseHeaders, is.def) }, base)
+    const options = {
+      headers: filter(baseHeaders, is.def),
+      method: base && base.method || 'GET',
+    }
+
+
 
     // encode body
     if (options.body) {
@@ -44,6 +55,7 @@ const api = (available, baseHeaders, routes) => map(routes, base => {
         ? fn(args[key])
         : fn))
     }
+    console.trace(options)
 
     return fetch(url, options).then(toJSON)
   }
