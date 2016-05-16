@@ -1,0 +1,3 @@
+const each = (fn, arr) => {
+
+}
