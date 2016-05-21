@@ -1,4 +1,4 @@
-const buildAnnotation = require('sloppy/build-annotation')
+const evalTheCode = require('helper/eval-the-code')
 const observables = require('state').observ
 const moulinette = require('helper/init-code-mirror')('moulinette', observables.test)
 const editor = require('component/editor')
@@ -26,7 +26,7 @@ const render = state => {
     clearEval()
     editor.eval(args => cm.setOption("lint", {
       async: true,
-      getAnnotations: buildAnnotation(args.text, args.cm, args.cb, applyCook)
+      getAnnotations: evalTheCode(args.text, args.cm, args.cb, applyCook)
     }))
   }
   return wrap([

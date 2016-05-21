@@ -1,6 +1,4 @@
 const h = require('lib/h')
-const keyDown = require('lib/event')
-const display = require('component/terminal-display')
 const ev = require('geval/event')
 const { progress } = require('state').observ
 const editor = require('helper/init-code-mirror')('editor', progress)
@@ -25,10 +23,18 @@ const render = state => {
       keyMap: 'sublime',
       lintOnChange: true,
     })
-    setTimeout(() => cm.setOption("lint", {
+
+    const enableLint = () => cm.setOption('lint', {
       getAnnotations: evalCode,
       async: true
-    }), 10);
+    })
+
+    render.requestEval = () => {
+      cm.setOption('lint', false)
+      setTimeout(enableLint, 10)
+    }
+
+    render.requestEval()
   }
   return editor.rendered
 }

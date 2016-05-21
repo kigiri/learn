@@ -20,3 +20,4 @@ const buildMethod = method => (...args) => {
 
 each((fn, key) => Event[key] = buildMethod(fn), methods);
 
+module.exports = Event
