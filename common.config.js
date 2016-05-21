@@ -13,7 +13,7 @@ const config = {
       templateContent: params => getAssets().then(assets =>
         jade.renderFile('./src/index.jade',
           Object.assign(assets, params.htmlWebpackPlugin.options))),
-      title: 'LambdaSauce',
+      title: 'LambdaLove',
       hash: true,
       inject: 'body',
       dnsList: [

@@ -14,7 +14,7 @@ module.exports = (id, obs) => {
     const conf = defaultConf(extendConfig)
     conf.value = obs() || ''
     const editor = cm(el, conf)
-    obs(val => editor.getDoc().setValue(val))
+    obs(val => editor.getDoc().setValue(val || ''))
     return editor
   }
 

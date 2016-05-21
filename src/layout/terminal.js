@@ -2,8 +2,6 @@ const h = require('lib/h');
 const videoDisplay = require('state').observ.videoDisplay
 const prepend = require('lib/prepend')
 
-require('./terminal.css')
-
 const ratio = 16 / 9
 
 const wrapper = h.curry('#terminal-layout.fit')

@@ -5,32 +5,52 @@ const assignDeep = require('lib/assign-deep')
 const window = require('global/window')
 const hash = require('lib/hash')
 const defaults = require('data/defaults')
-
+const local = window.localStorage
 const config = observ({})
+const progress = observ('')
 
 config.update = newConf => config.set(assignDeep(config(), newConf))
 
-const updateConf = () => {
-  const [ user, repo, branch ] = hash.parts()
+const exercise = observ.check(local.exercise)
+
+observ.immediate(exercise, ex => {
+  local.exercise = ex
+  progress.set(local[ex])
+})
+
+const setUrlDefault = (user, repo, branch, ex) => hash.set(
+  `${ user || defaults.user
+  }/${ repo || defaults.repo
+  }/${ branch || defaults.branch }/${ex}/`)
+
+observ.immediate(hash, () => {
+  const [ user, repo, branch, ex ] = hash.parts()
+  const prevEx = exercise()
+  if (!ex) {
+    if (prevEx) return setUrlDefault(user, repo, branch, prevEx)
+  } else if (prevEx !== ex) {
+    if (prevEx) return setUrlDefault(user, repo, branch, prevEx)
+    exercise.set(ex)
+  }
+
   config.update({
     branch: branch || defaults.branch,
     srcRepo: (user || defaults.user) +'/'+ (repo || defaults.repo),
   })
-}
+})
 
-hash(updateConf)
-
-updateConf()
+window.reloadDebug = (val) => val && test.set(val)
+const test = observ('')
 
 const state = {
+  test,
   config,
+  exercise,
+  progress,
   split: observ.check(0.5),
   codeMirror: observ(null),
   exemples: observ({}),
-  progress: observ(''),
   tests: observ({}),
-  test: observ(''),
-  sauce: observ.check(''),
   cookProps: observ({ eye: '-', message: 'Loading .....' }),
   _hotVersion: observ(0),
   viewHeight: event.viewHeight,

@@ -7,8 +7,6 @@ const mouse = observ.join({ x: domEv.mouseX, y: domEv.mouseY })
 const drag = observ.pausable(domEv.lbtn, mouse)
 const map = require('lib/collection/map')
 
-require('layout/tab.css')
-
 // drag(wesh)
 
 const remove = require('lib/arr')
@@ -47,6 +45,8 @@ function Tab(direction, render, parent) {
 
 main.y = (render, parent) => Tab('column', render, parent)
 main.x = (render, parent) => Tab('row', render, parent)
+
+window.reloadDebug(require('sauce/test.xmpl'))
 
 module.exports = main
 

@@ -4,7 +4,6 @@ const each = require('lib/collection/each')
 const cook = require('sauce/cook-ascii.txt').split('o')
 
 require('component/the-cook')
-require('./the-cook.css')
 
 const upperPart = cook[0]
 const lowerPart = cook[2]

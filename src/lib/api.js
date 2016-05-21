@@ -10,8 +10,19 @@ const toJSON = res => {
   throw Object.assign(Error(res.statusText), { res })
 }
 
-module.exports = (available, baseHeaders, routes) => map(routes, base => {
-  const rawUrl = is.str(base) ? base : base.url
+const toText = res => {
+  if (res.ok) return res.text()
+  throw Object.assign(Error(res.statusText), { res })
+}
+
+const api = (available, baseHeaders, routes) => map(routes, base => {
+  let rawUrl
+  if (is.str(base)) {
+    rawUrl = base
+    base = null
+  } else {
+    rawUrl = base.url
+  }
 
   baseHeaders['Content-Type'] = 'application/x-www-form-urlencoded'
 
@@ -23,8 +34,6 @@ module.exports = (available, baseHeaders, routes) => map(routes, base => {
         ? available[key.slice(0, idx)][key.slice(idx + 1)]
         : args[key]
 
-      console.log(src, key, part)
-
       if (!is.str(part)) {
         throw Error(`URL argument ${key} is not a string (type: ${typeof part})`)
       }   
@@ -33,7 +42,12 @@ module.exports = (available, baseHeaders, routes) => map(routes, base => {
     })
 
     // clone options
-    const options = assignDeep({ headers: filter(baseHeaders, is.def) }, base)
+    const options = {
+      headers: filter(baseHeaders, is.def),
+      method: base && base.method || 'GET',
+    }
+
+
 
     // encode body
     if (options.body) {
@@ -41,8 +55,10 @@ module.exports = (available, baseHeaders, routes) => map(routes, base => {
         ? fn(args[key])
         : fn))
     }
+    console.trace(options)
 
     return fetch(url, options).then(toJSON)
   }
 })
 
+module.exports = Object.assign(api, { toText, toJSON })

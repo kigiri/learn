@@ -26,6 +26,8 @@ hash(h => {
 
 hash.set(window.location.hash)
 
+hash.append = part => hash.set(hash() + part)
+
 hash.parts = () => hash().slice(2).split('/').filter(Boolean)
 
 module.exports = hash

@@ -9,7 +9,7 @@ const map = require('lib/collection/map')
 const api = require('helper/github')
 const is = require('lib/is')
 
-const sauce = observables.sauce
+const exercise = observables.exercise
 
 const baseAnnotation = {
   "from": {
@@ -37,8 +37,8 @@ const requestUpdate = args => _currentWork.then(() => {
 })
 
 function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) {
-  if (sauce()) {
-    window.localStorage[sauce()] = userCode
+  if (exercise()) {
+    window.localStorage[exercise()] = userCode
   }
 
   theCook.animate.load.loop()

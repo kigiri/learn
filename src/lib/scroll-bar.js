@@ -8,6 +8,4 @@ document.body.appendChild(scrollBox);
 scrollBar.size = scrollBox.getBoundingClientRect().height;
 document.body.removeChild(scrollBox);
 
-console.log("Scroll bar size:", size);
-
 export default scrollBar;
