@@ -56,12 +56,12 @@ const github = Object.assign(api(_, {}, {
   loadUpstream: `${API}/repos/:config.srcRepo/git/refs/heads/:config.branch`,
   update: {
     method: 'PUT',
-    url: `${API}/repos/:config.repo/contents/:path`,
+    url: `${API}/repos/:repo/contents/:path`,
     body: Object.assign({ sha: String }, createBody)
   },
   create: {
     method: 'PUT',
-    url: `${API}/repos/:config.repo/contents/:path`,
+    url: `${API}/repos/:repo/contents/:path`,
     body: createBody,
   },
 }))
@@ -86,21 +86,47 @@ github.create.progress = (filename, content) => github.create({
   content: content || '',
 })
 
-github.update.progress = filename => {
+github.update.progress = msg => {
   const exercise = state.exercise()
   const content = state.progress()
   const path = getProgressPath(exercise)
   const ref = 'master'
+  const repo = _.config.repo
   const reqBody = {
     path,
+    repo,
     content,
     branch: ref,
-    message: `Saving progress of ${path.replace('/', ' ')}`,
+    message: `Saving progress of ${path.replace('/', ' ')}${msg?(' - '+msg):''}`,
   }
 
   return github.dl.progress(exercise).then(value => (value === content)
     ? console.log('no changes to commit')
-    : github.browse({ path, ref, repo: _.config.repo })
+    : github.browse({ path, ref, repo })
+      .then(({ sha }) => github.update(Object.assign({ sha }, reqBody)))
+      .catch(err => {
+        if (not404(err)) throw err
+        return github.create(reqBody)
+      }))
+}
+
+github.update.tests = msg => {
+  const exercise = state.exercise()
+  const content = state.test()
+  const path = `tests/${exercise}`
+  const ref = _.config.branch
+  const repo = _.config.srcRepo
+  const reqBody = {
+    path,
+    repo,
+    content,
+    branch: ref,
+    message: `Saving tests of ${path.replace('/', ' ')}${msg?(' - '+msg):''}`,
+  }
+
+  return github.dl.test(exercise).then(value => (value === content)
+    ? console.log('no changes to commit')
+    : github.browse({ path, ref, repo })
       .then(({ sha }) => github.update(Object.assign({ sha }, reqBody)))
       .catch(err => {
         if (not404(err)) throw err
@@ -134,9 +160,6 @@ github.browse.tests = () => github.browse({
 })
 
 github.fork.progress = () => github.fork({ repo: 'kigiri/lambda-love-progress'})
-
-github.reset = () => github.loadUpstream()
-  .then(us => github.update({ ref: us.ref, sha: us.object.sha }))
 
 github.verifyUser = user => {
   if (!user || !user.login) {
