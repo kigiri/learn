@@ -42,9 +42,9 @@ const api = (available, baseHeaders, routes, parserKey) => map(routes, base => {
 
     // encode body
     if (base && base.body) {
-      options.body = wesh(JSON.stringify(map(base.body, (fn, key) => is.fn(fn)
+      options.body = JSON.stringify(map(base.body, (fn, key) => is.fn(fn)
         ? fn(args[key])
-        : fn)))
+        : fn))
     }
 
     return get(url, options).then(parser)

@@ -25,20 +25,28 @@ const syncConfig = c => _.config = c
 config(syncConfig)
 syncConfig(config())
 
+const not404 = err => !err || !err.res || err.res.status !== 404
 const skip404 = err => {
-  if (!err.res || err.res.status !== 404) throw err
+  if (not404(err)) throw err
   return ''
 }
 
-const rawDl = (repo, path) => get([
+const rawDl = (repo, branch, path) => get([
   'https://raw.githubusercontent.com',
   repo,
-  _.config.branch,
+  branch,
   path,
 ].join('/')).then(get.text).catch(skip404)
 
-const dl = path => rawDl(_.config.repo, path)
-dl.src = path => rawDl(_.config.srcRepo, path)
+const dl = path => rawDl(_.config.repo, 'master', path)
+dl.src = path => rawDl(_.config.srcRepo, _.config.branch, path)
+
+const createBody = {
+  path: String,
+  message: String,
+  content: content => btoa(String(content)),
+  branch: branch => branch || 'master',
+}
 
 const github = Object.assign(api(_, {}, {
   browse: `${API}/repos/:repo/contents/:path?ref`,
@@ -47,22 +55,14 @@ const github = Object.assign(api(_, {}, {
   loadUser: `${API}/user`,
   loadUpstream: `${API}/repos/:config.srcRepo/git/refs/heads/:config.branch`,
   update: {
-    method: 'PATCH',
-    url: `${API}/repos/:config.repo/git/:ref`,
-    body: {
-      sha: String,
-      force: true,
-    }
+    method: 'PUT',
+    url: `${API}/repos/:config.repo/contents/:path`,
+    body: Object.assign({ sha: String }, createBody)
   },
   create: {
     method: 'PUT',
     url: `${API}/repos/:config.repo/contents/:path`,
-    body: {
-      path: String,
-      message: String,
-      content: content => btoa(String(content)),
-      branch: branch => branch || 'master',
-    },
+    body: createBody,
   },
 }))
 
@@ -72,14 +72,13 @@ const getProgressPath = name => `${_.config.branch}-${
   _.config.srcRepo.replace('/', '-')
 }/${name || ''}`
 
-
-window.github = github
-
 github.dl.test = name => dl.src(`tests/${name}`)
 github.dl.progress = name => is.undef(_.config.repo)
   ? dl.src(`exemples/${name}`)
   : dl(getProgressPath(name))
     .catch(err => dl.src(`exemples/${name}`))
+
+github.dl.progress.current = () => github.dl.progress(state.exercise())
 
 github.create.progress = (filename, content) => github.create({
   path: getProgressPath(filename),
@@ -87,11 +86,39 @@ github.create.progress = (filename, content) => github.create({
   content: content || '',
 })
 
+github.update.progress = filename => {
+  const exercise = state.exercise()
+  const content = state.progress()
+  const path = getProgressPath(exercise)
+  const ref = 'master'
+  const reqBody = {
+    path,
+    content,
+    branch: ref,
+    message: `Saving progress of ${path.replace('/', ' ')}`,
+  }
+
+  return github.dl.progress(exercise).then(value => (value === content)
+    ? console.log('no changes to commit')
+    : github.browse({ path, ref, repo: _.config.repo })
+      .then(({ sha }) => github.update(Object.assign({ sha }, reqBody)))
+      .catch(err => {
+        if (not404(err)) throw err
+        return github.create(reqBody)
+      }))
+}
+
 // shorthands for known repositories :
 github.browse.progress = () => github.browse({
   repo: _.config.repo,
   ref: 'master',
   path: getProgressPath(),
+})
+
+github.browse.progress.current = () => github.browse({
+  repo: _.config.repo,
+  ref: 'master',
+  path: getProgressPath(state.exercise()),
 })
 
 github.browse.exemples = () => github.browse({
