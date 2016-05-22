@@ -6,7 +6,7 @@ const assign = require('lib/assign')
 
 function channels(funcs, context) {
   return store(funcs, (acc, fn, name) =>
-    acc[name] = Delegator.allocateHandle(fn.bind(null, context)))
+    acc[name] = Delegator.allocateHandle(fn.bind(undefined, context)))
 }
 
 function state(obj, ...extent) {
@@ -14,7 +14,7 @@ function state(obj, ...extent) {
   const $channels = obj.channels
 
   if ($channels) {
-    obj.channels = _value(null)
+    obj.channels = _value(undefined)
   }
 
   const observ = _struct(obj)

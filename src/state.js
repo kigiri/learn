@@ -1,13 +1,16 @@
-const buildState = require('lib/state')
-const observ = require('lib/emiter/observ')
-const event = require('lib/event')
-const assignDeep = require('lib/assign-deep')
-const window = require('global/window')
 const hash = require('lib/hash')
+const event = require('lib/event')
+const window = require('global/window')
+const observ = require('lib/emiter/observ')
 const defaults = require('data/defaults')
-const local = window.localStorage
+const buildState = require('lib/state')
+const assignDeep = require('lib/assign-deep')
+
 const config = observ({})
-const progress = observ('')
+const local = window.localStorage
+const existsAndNotEql = (a, b) => a ? (a !== b) : false
+const progress = observ.check('', existsAndNotEql)
+progress(console.trace.bind(console))
 
 config.update = newConf => {
   config.set(assignDeep(config(), newConf))
@@ -17,11 +20,14 @@ config.update = newConf => {
   }
 }
 
-const exercise = observ.check(local.exercise)
+const exercise = observ.check(local.exercise, existsAndNotEql)
 
 observ.immediate(exercise, ex => {
+  if (!ex) return
   local.exercise = ex
-  progress.set(local[ex])
+  if (local[ex]) {
+    progress.set(local[ex])
+  }
 })
 
 const setUrlDefault = (user, repo, branch, ex) => hash.set(
@@ -52,8 +58,7 @@ const getEditorModeInitValue = () => {
 }
 
 const editorMode = observ.check(getEditorModeInitValue())
-const test = observ('')
-observ.format(test, val => {
+const test = observ.format(observ(''), val => {
   if (!editorMode()) return val
   const key = `__TEST__${exercise()}__`
   if (local[key]) return local[key]
@@ -70,7 +75,7 @@ const state = {
   split: observ.check(0.5),
   exemples: observ({}),
   cookProps: observ({ eye: '-', message: 'Loading .....' }),
-  codeMirror: observ(null),
+  codeMirror: observ(),
   _hotVersion: observ(0),
   viewHeight: event.viewHeight,
   viewWidth: event.viewWidth,

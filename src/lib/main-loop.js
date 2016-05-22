@@ -26,7 +26,7 @@ module.exports = function mainLoop(initialState, view, opts) {
 
   const requestRedraw = once(loop.after, () => {
     redrawScheduled = false
-    if (currentState === null) return
+    if (currentState === undefined) return
 
     inRenderingTransaction = true
     const newTree = view(currentState)
@@ -41,7 +41,7 @@ module.exports = function mainLoop(initialState, view, opts) {
 
     tree = newTree
     mLoop.broadcast(currentState);
-    currentState = null
+    currentState = undefined
   });
 
   mLoop.once = fn => once(mLoop.listen, fn)();
@@ -53,7 +53,7 @@ module.exports = function mainLoop(initialState, view, opts) {
       throw new Error(errorMessage);
     }
 
-    if (currentState === null && !redrawScheduled) {
+    if (currentState === undefined && !redrawScheduled) {
       redrawScheduled = true
       requestRedraw()
     }
@@ -65,7 +65,7 @@ module.exports = function mainLoop(initialState, view, opts) {
     mLoop.state = state
   }
 
-  currentState = null
+  currentState = undefined
 
   return mLoop
 }

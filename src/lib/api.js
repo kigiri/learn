@@ -1,21 +1,14 @@
 const is = require('lib/is')
 const map = require('lib/map')
+const get = require('lib/fetch-trace')
 const filter = require('lib/filter')
 const reduce = require('lib/reduce')
 const assignDeep = require('lib/assign-deep')
 
 const matchVariable = /(?:(?:\/:)|(?:[?&]))([^\/?&]+)/g
-const toJSON = res => {
-  if (res.ok) return res.json()
-  throw Object.assign(Error(res.statusText), { res })
-}
 
-const toText = res => {
-  if (res.ok) return res.text()
-  throw Object.assign(Error(res.statusText), { res })
-}
-
-const api = (available, baseHeaders, routes) => map(routes, base => {
+const api = (available, baseHeaders, routes, parserKey) => map(routes, base => {
+  const parser = get[parserKey] || get.json
   let rawUrl
   if (is.str(base)) {
     rawUrl = base
@@ -54,13 +47,8 @@ const api = (available, baseHeaders, routes) => map(routes, base => {
         : fn)))
     }
 
-    const errorTrace = Error('cached stack trace')
-
-    return fetch(url, options).then(toJSON).catch(err => {
-      errorTrace.message = err.message
-      throw errorTrace
-    })
+    return get(url, options).then(parser)
   }
 })
 
-module.exports = Object.assign(api, { toText, toJSON })
+module.exports = api

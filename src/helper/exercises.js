@@ -14,11 +14,18 @@ const chaininfy = reduce((prev, next) => {
   return next
 })
 
+const unabriged = {
+  prev: 'previous',
+  next: 'next',
+}
+
 const __load = key => {
-  const ex = state.tests()[state.exercise()]
-  if (ex && ex[key]) {
-    state.exercise.set(ex[key].name)
-  }
+  const tests = state.tests()
+  if (!tests) return console.warn('unable to load tests')
+  const ex = tests[state.exercise()]
+  if (!ex || !ex[key]) return console.warn(`unable to find ${key} test`)
+  console.log(`loading ${unabriged[key]} test : ${ex[key].name}`)
+  state.exercise.set(ex[key].name)
 }
 
 const loadNext = () => __load('next')
@@ -27,15 +34,20 @@ const loadPrev = () => __load('prev')
 const prepareFiles = arr => {
   const files = store(arr, (acc, val) => acc[val.name] = val)
 
-  files.__first__ = arr[0]
   files.__last__ = chaininfy(files)
+  files.__first__ = arr[0]
   files.__arr__ = arr
+
+  files.__first__.prev = undefined
+  files.__last__.next = undefined
 
   return files
 }
 
 let progressFiles = {}
 Object.assign(window, {
+  next: loadNext,
+  prev: loadPrev,
   git: {
     raw: github,
     logout: () => delete window.localStorage.__ID__,
@@ -53,13 +65,14 @@ Object.assign(window, {
           console.log('You are successfully logged in, using repo',
             repo.full_name)
           return github.browse.progress().catch(err => {
-            console.log('Uh oh, creating ?', err)
+            console.log('Uh oh, creating ?')
+            console.dir(err)
             return github.create.progress(state.exercise(), '')
               .then(ex => wesh([ ex.content ]))
-            })
+          })
         }).then(files => {
           progressFiles = prepareFiles(files)
-          console.log('progress restaured !, jumping to exercise',
+          console.log('progress restaured, jumping to exercise',
             progressFiles.__last__.name)
           state.exercise.set(progressFiles.__last__.name)
         })

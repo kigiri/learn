@@ -1,9 +1,10 @@
 const is = require('lib/is')
 const api = require('lib/api')
-const assignDeep = require('lib/assign-deep')
-const { btoa } = require('global/window')
+const get = require('lib/fetch-trace')
 const hash = require('lib/hash')
 const state = require('state').observ
+const { btoa } = require('global/window')
+const assignDeep = require('lib/assign-deep')
 const { config } = state
 
 const API = 'https://api.github.com'
@@ -24,12 +25,17 @@ const syncConfig = c => _.config = c
 config(syncConfig)
 syncConfig(config())
 
-const rawDl = (repo, path) => fetch([
+const skip404 = err => {
+  if (!err.res || err.res.status !== 404) throw err
+  return ''
+}
+
+const rawDl = (repo, path) => get([
   'https://raw.githubusercontent.com',
   repo,
   _.config.branch,
   path,
-].join('/')).then(api.toText)
+].join('/')).then(get.text).catch(skip404)
 
 const dl = path => rawDl(_.config.repo, path)
 dl.src = path => rawDl(_.config.srcRepo, path)
@@ -72,7 +78,8 @@ window.github = github
 github.dl.test = name => dl.src(`tests/${name}`)
 github.dl.progress = name => is.undef(_.config.repo)
   ? dl.src(`exemples/${name}`)
-  : dl(getProgressPath(name)).catch(err => dl.src(`exemples/${name}`))
+  : dl(getProgressPath(name))
+    .catch(err => dl.src(`exemples/${name}`))
 
 github.create.progress = (filename, content) => github.create({
   path: getProgressPath(filename),

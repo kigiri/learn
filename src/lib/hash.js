@@ -21,7 +21,7 @@ window.addEventListener('popstate', () => {
 
 hash(h => {
   if (inPopState) return inPopState = false
-  window.history.pushState(null, document.title, '/'+ h)
+  window.history.pushState(undefined, document.title, '/'+ h)
 })
 
 hash.set(window.location.hash)

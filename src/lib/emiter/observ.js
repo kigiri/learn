@@ -55,7 +55,7 @@ function ObservOnce() {
   subscriber.set = val => {
     if (!listeners) return console.warn('trigger a once multiple times')
     each(fn => fn(val), listeners)
-    listeners = subscriber.set = null
+    listeners = subscriber.set = undefined
   }
 
   return subscriber

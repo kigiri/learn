@@ -60,7 +60,7 @@ Deque.proto = {
 
   empty: state => {
     if (!state.length) return;
-    state.head.next.prev = state.head.prev.next = null;
+    state.head.next.prev = state.head.prev.next = undefined;
     state.head.next = state.head.prev = state.head;
     state.length = 0;
     return state;

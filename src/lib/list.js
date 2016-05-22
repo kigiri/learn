@@ -107,7 +107,7 @@ const filter = (fn, head) => {
 }
 
 const empty = head => {
-  head.next.prev = head.prev.next = null
+  head.next.prev = head.prev.next = undefined
   return head.next = head.prev = head
 }
 

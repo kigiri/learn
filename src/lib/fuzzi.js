@@ -135,7 +135,7 @@ function fuzzyScore(str, pattern, s, p, score, bonus, deepness) {
 
 function lintFold({ matched, str }, fn, acc) {
   if (!Array.isArray(matched) || !matched.length) { return str }
-  let prevIdx = null
+  let prevIdx
   let openTag = false
   let i = -1
   let currentStr = ''
@@ -151,7 +151,7 @@ function lintFold({ matched, str }, fn, acc) {
         openTag = true
       }
       prevIdx = idx
-    } else if ((prevIdx !== null) && openTag) {
+    } else if ((prevIdx !== undefined) && openTag) {
       acc = fn(acc, currentStr, openTag)
       currentStr = ''
       openTag = false
@@ -189,13 +189,13 @@ const matcher = (base, fn) => {
   m.best = (pattern, count) => {
     count = checkCount(count)
     const mm = m(pattern)
-    if (!mm.length) return count ? [] : null
+    if (!mm.length) return count ? [] : undefined
     const matched = count
       ? m(pattern).filter(noScore).sort(sortByScore).slice(0, count)
       : m(pattern).reduce((val, best) =>
         sortByScore(val, best) < 0 ? val : best)
     if (count) return matched
-    return matched.score ? matched : null
+    return matched.score ? matched : undefined
   }
 
   return m

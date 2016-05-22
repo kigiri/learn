@@ -66,7 +66,7 @@ function buildVnode(tag, props, children, key, namespace) {
 }
 
 function addChild(c, childNodes, tag, props) {
-  if (c === undefined || c === null) return
+  if (c === undefined || c === undefined) return
   if (is.str(c)) {
     childNodes.push(new VText(c))
   } else if (typeof c === 'number') {
@@ -102,7 +102,7 @@ function UnexpectedVirtualElement(data) {
 
 function errorString(obj) {
   try {
-    return JSON.stringify(obj, null, '    ')
+    return JSON.stringify(obj, undefined, '    ')
   } catch (e) {
     return String(obj)
   }
