@@ -77,6 +77,7 @@ const getProgressPath = name => `${_.config.branch}-${
 }/${name || ''}`
 
 github.dl.test = name => dl.src(`tests/${name}`)
+github.dl.exemple = name => dl.src(`exemples/${name}`)
 github.dl.progress = name => is.undef(_.config.repo)
   ? dl.src(`exemples/${name}`)
   : dl(getProgressPath(name))
@@ -90,21 +91,23 @@ github.create.progress = (filename, content) => github.create({
   content: content || '',
 })
 
-github.update.progress = msg => {
+const update = (key, opts) => {
+  const { ref, repo } = opts
   const exercise = state.exercise()
-  const content = state.progress.current()
-  const path = getProgressPath(exercise)
-  const ref = 'master'
-  const repo = _.config.repo
+  const content = (state[key] || state.progress).current()
+  const msg = opts.msg ? ` - ${opts.msg}` : ''
+  const path = key === 'progress'
+    ? getProgressPath(exercise)
+    : `${key}s/${exercise}`
   const reqBody = {
     path,
     repo,
     content,
     branch: ref,
-    message: `Saving progress of ${path.replace('/', ' ')}${msg?(' - '+msg):''}`,
+    message: `Saving ${key} of ${path.replace('/', ' ')}${msg}`,
   }
 
-  return github.dl.progress(exercise).then(value => (value === content)
+  return github.dl[key](exercise).then(value => (value === content)
     ? console.log('no changes to commit')
     : github.browse({ path, ref, repo })
       .then(({ sha }) => github.update(Object.assign({ sha }, reqBody)))
@@ -114,29 +117,23 @@ github.update.progress = msg => {
       }).then(() => console.log(reqBody.message)))
 }
 
-github.update.tests = msg => {
-  const exercise = state.exercise()
-  const content = state.test.current()
-  const path = `tests/${exercise}`
-  const ref = _.config.branch
-  const repo = _.config.srcRepo
-  const reqBody = {
-    path,
-    repo,
-    content,
-    branch: ref,
-    message: `Saving tests of ${path.replace('/', ' ')}${msg?(' - '+msg):''}`,
-  }
+github.update.progress = msg => update('progress', {
+  msg,
+  ref: 'master',
+  repo: _.config.repo,
+})
 
-  return github.dl.test(exercise).then(value => (value === content)
-    ? console.log('no changes to commit')
-    : github.browse({ path, ref, repo })
-      .then(({ sha }) => github.update(Object.assign({ sha }, reqBody)))
-      .catch(err => {
-        if (not404(err)) throw err
-        return github.create(reqBody)
-      }).then(() => console.log(reqBody.message)))
-}
+github.update.test = msg => update('test', {
+  msg,
+  ref: _.config.branch,
+  repo: _.config.srcRepo,
+})
+
+github.update.exemple = msg => update('exemple', {
+  msg,
+  ref: _.config.branch,
+  repo: _.config.srcRepo,
+})
 
 // shorthands for known repositories :
 github.browse.progress = () => github.browse({
