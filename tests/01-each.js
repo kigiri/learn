@@ -28,7 +28,7 @@ each((v, i, givenArray) => isTrue(baseTestArray === givenArray), baseTestArray)
 
 // each must return the given array
 const myRef = []
-isTrue(each(() => {}) === myRef)
+isTrue(each(() => {}, myRef) === myRef)
 
 /* the cook
 It's all well and good
