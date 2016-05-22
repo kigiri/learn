@@ -7,8 +7,8 @@
  *
  * Once you are login, your credentials are stored in the localStorage.
  *
- * To be forgoten simply delete the authorization key :
- * -> delete localStorage.authorization
+ * To be forgoten simply clear the localStorage :
+ * -> localStorage.clear()
  *
  */
  
