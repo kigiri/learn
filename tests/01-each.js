@@ -11,7 +11,7 @@ var counter = 0
 // given function must be called 4 times
 each(() => counter++, baseTestArray)
 
-isTrue(countLoops === 4)
+isTrue(counter === 4)
 
 // first argument shoud be the value
 counter = 0
