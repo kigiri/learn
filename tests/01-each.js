@@ -1,135 +1,60 @@
-/* the cook
-Well, that was easy...
-And now for something completely different
-write the function each.
-each must behave like Array.forEach, takes in an array as second argument
-*/
+const baseEachIter = (fn, arr) => {
+  const max = arr.length
+  let idx = -1
 
-const baseTestArray = [ 4, 1, 2, 3 ]
-var counter = 0
-
-// given function must be called 4 times
-each(() => counter++, baseTestArray)
-
-isTrue(countLoops === 4)
-
-// first argument shoud be the value
-counter = 0
-const addToCounter = value => counter += value 
-each(addToCounter, baseTestArray)
-
-isTrue(counter === 10)
-
-// the second argument should be the index
-each((value, index) => isTrue(baseTestArray[index] === value), baseTestArray)
-
-// the third and last argument should be the index
-each((v, i, givenArray) => isTrue(baseTestArray === givenArray), baseTestArray)
-
-// each must return the given array
-const myRef = []
-isTrue(each(() => {}) === myRef)
-
-/* the cook
-It's all well and good
-but why stop here ?
-Let's try to add some functional spices to the mix
-what about... some curry !
-*/
-
-const storeArray = []
-const accummulate = each(value => storeArray.push(value))
-
-accummulate([ 1, 2 , 3 ])
-accummulate([ 4, 5 , 6 ])
-
-isTrue(storeArray.length === 6)
-
-isTrue(storeArray[3] === 4)
-
-/* the cook
-Hummm smells good...
-Now, is it faster than forEach ?
-*/
-
-const addEachToCounter = each(addToCounter)
-const bigArray = Array(5000000).join().split(',')
-
-const startTime = performance.now()
-counter = 0
-bigArray.forEach(addToCounter)
-
-const midTime = performance.now()
-
-counter = 0
-addEachToCounter(bigArray)
-
-const endTime = performance.now()
-
-const nativeForEachDelta = midTime - startTime
-const yourEachDelta =  endTime - midTime
-
-console.log({ nativeForEachDelta, yourEachDelta })
-
-// You should be faster
-isTrue(yourEachDelta < nativeForEachDelta)
-
-const times = nativeForEachDelta / yourEachDelta
-
-// Arround 5 times faster will pass, but you should have arround 10x
-isTrue(times > 5)
-
-/* the cook
-while and for have breaks tought, looping through those bigs arrays is slow
-what if we could explicitly break the loop if the function return false ?
-*/
-
-counter = 0
-const iter5Times = each(() => ++counter < 5)
-
-iter5Times(bigArray)
-
-isTrue(counter = 5)
-
-/* the cook
-Ok we got a nice currying, some good performances, better control.
-How about adding some feature, array all day is pretty dull.
-Let's see how we could handle Objects too !
-*/
-
-const handyObject = {
-  a: 1,
-  b: 32,
-  c: 45,
-  d: 25,
+  while (++idx < max) {
+    if (fn(arr[idx], idx, arr) === false) break
+  }
+  
+  return arr
 }
 
-counter = 0
-addEachToCounter(handyObject)
+const baseEachKeys = (fn, obj) => {
+  const keys = Object.keys(obj)
+  const max = keys.length
+  let idx = -1
+	let key
 
-isTrue(counter === 103)
+  while (++idx < max) {
+    key = keys[idx]
+    if (fn(obj[key], key, obj) === false) break
+  }
+  
+  return obj
+}
 
-/* the cook
-What about something more fancy this time ?
-Mix in some modern Set and Map.
-*/
+const simpleBaseFor = (fn, set) => {
+  let idx = 0
+  for (const value of set) {
+    if (fn(value, idx++, set) === false) break
+  }
+  
+  return set
+}
 
-const modernSet = new Set()
-const modernMap = new Map()
-const addToSet = each(modernSet.add.bind(modernSet))
-const addToMap = each((value, key) => modernMap.set(key, value))
+const keyBaseFor = (fn, map) => {
+  for (const [ key, value ] of map) {
+    if (fn(value, key, map) === false) break
+  }
+  
+  return map
+}
 
-addToMap(handyObject)
-addToSet(handyObject)
+const polymorphiqueEach = (fn, collection) => {
+  if (!collection) return collection
+  switch (collection.constructor) {
+    case Set: return simpleBaseFor(fn, collection)
+    case Map: return keyBaseFor(fn, collection)
+    case Array:
+    case String: return baseEachIter(fn, collection)
+    default: return baseEachKeys(fn, collection)
+  }
+}
 
-counter = 0
-addEachToCounter(modernSet)
-isTrue(counter === 103)
+const each = (fn, ...args) => {
+	if (args.length > 0) return polymorphiqueEach(fn, ...args)
+  return arr => polymorphiqueEach(fn, arr)
+}
 
-counter = 0
-addEachToCounter(modernMap)
-isTrue(counter === 103)
 
-/* the cook
-Now that's a nice each !
-*/
+
