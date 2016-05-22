@@ -89,7 +89,7 @@ const iter5Times = each(() => ++counter < 5)
 
 iter5Times(bigArray)
 
-isTrue(counter = 5)
+isTrue(counter === 5)
 
 /* the cook
 Ok we got a nice currying, some good performances, better control.
