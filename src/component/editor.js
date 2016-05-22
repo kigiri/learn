@@ -14,14 +14,7 @@ const evalCode = (text, cb, opts, cm) => {
 
 const render = state => {
   if (state.codeMirror && !editor.loaded) {
-    const cm = editor(state.codeMirror, {
-      autofocus: true,
-      readOnly: false,
-      inputStyle: 'contenteditable',
-      rulers: [ { column: 80, color: '#252732', width: '2000px' } ],
-      keyMap: 'sublime',
-      lintOnChange: true,
-    })
+    const cm = editor(state.codeMirror, { lintOnChange: true }, 'editable')
 
     const enableLint = () => cm.setOption('lint', {
       getAnnotations: evalCode,

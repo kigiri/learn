@@ -1,5 +1,5 @@
 const h = require('lib/h')
-const defaultConf = require('data/cm-config-readonly')
+const defaultConf = require('data/cm-config')
 
 function cleanup(id) {
   const prevElem = document.getElementById(id)
@@ -7,11 +7,11 @@ function cleanup(id) {
 }
 
 module.exports = (id, obs) => {
-  const init =  (cm, extendConfig) => {
+  const init = (cm, extendConfig, base) => {
     init.loaded = true
     cleanup(id)
     const el = document.getElementById(id)
-    const conf = defaultConf(extendConfig)
+    const conf = (defaultConf[base] || defaultConf.readOnly)(extendConfig)
     conf.value = obs() || ''
     const editor = cm(el, conf)
     obs(val => editor.getDoc().setValue(val || ''))

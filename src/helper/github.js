@@ -108,7 +108,6 @@ github.reset = () => github.loadUpstream()
 github.verifyUser = user => {
   if (!user || !user.login) {
     if (!baseHeaders.Authorization) return Promise.reject(Error('404'))
-    console.log('!', user, baseHeaders.Authorization)
   } else {
     const id = btoa(user.login +':'+ user.password)
     window.localStorage.__ID__ = id

@@ -36,7 +36,7 @@ const prepareFiles = arr => {
 
 let progressFiles = {}
 Object.assign(window, {
-  github: {
+  git: {
     raw: github,
     logout: () => delete window.localStorage.__ID__,
     login: (login, password) => {
@@ -50,7 +50,6 @@ Object.assign(window, {
       github.verifyUser({ login, password }).then(github.fork.progress)
         .then(repo => {
           state.config.update({ repo: repo.full_name })
-          console.log('yolo', repo, state.config())
           console.log('You are successfully logged in, using repo',
             repo.full_name)
           // return github.browse.progress().catch(err => {
@@ -73,7 +72,7 @@ Object.assign(window, {
 
 
 if (window.localStorage.__ID__) {
-  window.github.login()
+  window.git.login()
 }
 
 // load tests

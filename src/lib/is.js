@@ -25,9 +25,9 @@ function isHook(hook) {
      typeof hook.unhook === "function" && !hook.hasOwnProperty("unhook"))
 }
 
-const isNode = isDef(window);
-const isFloat = (float => isNum(float) && Math.floor(float) !== float);
-const isInt = Number.isInteger || (int => isNum(int) && Math.floor(int) === int);
+const isNode = isDef(window)
+const isFloat = (float => isNum(float) && Math.floor(float) !== float)
+const isInt = Number.isInteger || (int => isNum(int) && Math.floor(int) === int)
 
 module.exports = {
   fn: isFn,
@@ -47,4 +47,22 @@ module.exports = {
   observ: isObserv,
   promise: isPromise,
   children: isChildren,
-};
+  // Aliases for destructuring
+  isFn,
+  isArr,
+  isDef,
+  isInt,
+  isStr,
+  isObj,
+  isNum,
+  isBool,
+  isNode,
+  isUndef,
+  isFloat,
+  isChild,
+  isHook,
+  isEvent,
+  isObserv,
+  isPromise,
+  isChildren,
+}

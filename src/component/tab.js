@@ -46,8 +46,6 @@ function Tab(direction, render, parent) {
 main.y = (render, parent) => Tab('column', render, parent)
 main.x = (render, parent) => Tab('row', render, parent)
 
-window.reloadDebug(require('sauce/test.xmpl'))
-
 module.exports = main
 
 

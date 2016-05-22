@@ -9,7 +9,13 @@ const local = window.localStorage
 const config = observ({})
 const progress = observ('')
 
-config.update = newConf => config.set(assignDeep(config(), newConf))
+config.update = newConf => {
+  config.set(assignDeep(config(), newConf))
+  if (newConf && newConf.login) {
+    const { login, srcRepo } = config()
+    editorMode.set(srcRepo.split('/')[0] === login)
+  }
+}
 
 const exercise = observ.check(local.exercise)
 
@@ -39,19 +45,32 @@ observ.immediate(hash, () => {
   })
 })
 
-window.reloadDebug = (val) => val && test.set(val)
+const getEditorModeInitValue = () => {
+  if (!local.__ID__) return false
+  const user = atob(local.__ID__).split(':')[0]
+  return hash.parts()[0] === user
+}
+
+const editorMode = observ.check(getEditorModeInitValue())
 const test = observ('')
+observ.format(test, val => {
+  if (!editorMode()) return val
+  const key = `__TEST__${exercise()}__`
+  if (local[key]) return local[key]
+  return local[key] = val
+})
 
 const state = {
   test,
   config,
   exercise,
   progress,
-  split: observ.check(0.5),
-  codeMirror: observ(null),
-  exemples: observ({}),
+  editorMode,
   tests: observ({}),
+  split: observ.check(0.5),
+  exemples: observ({}),
   cookProps: observ({ eye: '-', message: 'Loading .....' }),
+  codeMirror: observ(null),
   _hotVersion: observ(0),
   viewHeight: event.viewHeight,
   viewWidth: event.viewWidth,

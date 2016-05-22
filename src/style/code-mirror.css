@@ -13,6 +13,10 @@
   height: 100%
 }
 
+.CodeMirror-scroll {
+  /* FIX WEIRD SCROLLS */ 
+}
+
 /* The lint marker gutter */
 .CodeMirror-lint-markers {
   width: 0px;

@@ -47,17 +47,19 @@ const api = (available, baseHeaders, routes) => map(routes, base => {
       method: base && base.method || 'GET',
     }
 
-
-
     // encode body
     if (options.body) {
       options.body = JSON.stringify(map(options.body, (fn, key) => is.fn(fn)
         ? fn(args[key])
         : fn))
     }
-    console.trace(options)
 
-    return fetch(url, options).then(toJSON)
+    const errorTrace = Error('cached stack trace')
+
+    return fetch(url, options).then(toJSON).catch(err => {
+      errorTrace.message = err.message
+      throw errorTrace
+    })
   }
 })
 

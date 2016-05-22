@@ -11,6 +11,14 @@ const getErrorPositions = splitedStack => {
 }
 
 const buildError = (err, text, offset) => {
+  if (!err.stack) {
+    console.error(err.message)
+    return {
+      message: err.message,
+      from: { line: 0, ch: 0 },
+      to: { line: 1, ch: 1 },
+    }
+  }
   const lineError = getErrorPositions(err.stack.split('\n'))
   const line = Math.max(0, Number(lineError[1]) - offset)
   const ch = Number(lineError[2]) - 1

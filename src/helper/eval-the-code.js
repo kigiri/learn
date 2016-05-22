@@ -12,14 +12,8 @@ const is = require('lib/is')
 const exercise = observables.exercise
 
 const baseAnnotation = {
-  "from": {
-    "line": 0,
-    "ch": 0
-  },
-  "to": {
-    "line": 0,
-    "ch": 10
-  }
+  from: { line: 0, ch: 0  },
+  to:   { line: 0, ch: 10 },
 }
 
 const fromMsg = (apply, message) =>
@@ -41,16 +35,14 @@ function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) 
     window.localStorage[exercise()] = userCode
   }
 
-  theCook.animate.load.loop()
-  return asyncEval(userCode).then(err => err
-    ? { editor: apply(moulinter(err, userCode, 1)) }
-    : asyncEval(userCode +'\n'+ testCode))
-  .then(err => {
+  const handleFinalEvalReturn = err => {
     if (!err) return { test: apply([]) }
     const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)
     testCm.scrollIntoView({ line: annotations[0].from.line, ch: 0 }, 15)
     return { test: apply(annotations) }
-  }).catch(err => {
+  }
+
+  const handleTimeoutErrors = err => {
     if (!err.startTime) return { test: fromMsg(apply, err.message) }
     const diff = Date.now() - err.startTime
 
@@ -61,21 +53,31 @@ function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) 
         +' check your code for infinit loops'
         +' and reload the page once you fixed it')
     }
-  }).then(({ editor, test }) => {
+  }
+
+  const finalize = ({ editor, test }) => {
     theCook.animate.load.stop()
     editorCb(editor || [])
     testCb(test || [])
-  })
+  }
+
+  theCook.animate.load.loop()
+  return asyncEval(userCode).then(err => err
+    ? { editor: apply(moulinter(err, userCode, 1)) }
+    : asyncEval(userCode +'\n'+ testCode)
+      .then(handleFinalEvalReturn))
+    .catch(handleTimeoutErrors)
+    .then(finalize)
 }
 
-const buildAnnotation = (userCode, editorCm, editorCb, apply) =>
+const buildAnnotation = ({ cb, text }, apply) =>
   (testCode, testCb, opts, testCm) => requestUpdate({
     apply,
     testCm,
     testCb,
     testCode,
-    editorCb,
-    userCode,
+    editorCb: cb,
+    userCode: text,
   })
 
 module.exports = buildAnnotation

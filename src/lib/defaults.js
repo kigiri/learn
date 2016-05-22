@@ -1,12 +1,12 @@
-const store = require('lib/store');
-const is = require('lib/is');
+const store = require('lib/store')
+const { isArr, isDef } = require('lib/is')
 
-const setkey = (src, value, key) => is.undef(src[key]) || (src[key] = value);
+const setkey = (src, value, key) => isDef(src[key]) || (src[key] = value)
 
-const delegate = (src, obj) => is.arr(obj)
+const delegate = (src, obj) => isArr(obj)
   ? defaults(src, obj)
-  : store(obj, setkey, src);
+  : store(obj, setkey, src)
 
-const defaults = (src, objs) => store(objs, delegate, src);
+const defaults = (src, objs) => store(objs, delegate, src)
 
-module.exports = (src, ...objs) => defaults(src, objs);
+module.exports = (src, ...objs) => defaults(src, objs)
