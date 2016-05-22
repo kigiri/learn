@@ -10,7 +10,6 @@ const config = observ({})
 const local = window.localStorage
 const existsAndNotEql = (a, b) => a ? (a !== b) : false
 const progress = observ.check('', existsAndNotEql)
-progress(console.trace.bind(console))
 
 config.update = newConf => {
   config.set(assignDeep(config(), newConf))

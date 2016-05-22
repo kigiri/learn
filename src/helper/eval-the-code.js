@@ -1,7 +1,7 @@
-const theCook = require('component/the-cook')
-const asyncEval = require('lib/eval')
 const observables = require('state').observ
 const moulinter = require('helper/moulinette-linter')
+const asyncEval = require('lib/eval')
+const theCook = require('component/the-cook')
 const reduce = require('lib/collection/reduce')
 const series = require('lib/promise-series')
 const count = require('lib/count')
@@ -10,6 +10,7 @@ const api = require('helper/github')
 const is = require('lib/is')
 
 const exercise = observables.exercise
+const editorMode = observables.editorMode
 
 const baseAnnotation = {
   from: { line: 0, ch: 0  },
@@ -38,11 +39,14 @@ function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) 
   const handleFinalEvalReturn = err => {
     if (!err) return { test: apply([]) }
     const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)
-    testCm.scrollIntoView({ line: annotations[0].from.line, ch: 0 }, 15)
+    if (!editorMode()) {
+      testCm.scrollIntoView({ line: annotations[0].from.line, ch: 0 }, 15)
+    }
     return { test: apply(annotations) }
   }
 
   const handleTimeoutErrors = err => {
+    console.log(err)
     if (!err.startTime) return { test: fromMsg(apply, err.message) }
     const diff = Date.now() - err.startTime
 

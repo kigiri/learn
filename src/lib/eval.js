@@ -5,25 +5,27 @@ const messageEvent = Ev()
 const evalWorker = worker(`
 "use strict"
 
+let __index__ = 0
 const validator = bool => valid => {
-  index++
+  __index__++
   if (valid !== bool) {
-    throw new Error('test #'+ index +' failed :(')
+    throw new Error('test #'+ __index__ +' failed :(')
   }
 }
 
 const isTrue = validator(true)
 const isFalse = validator(false)
 
-let _instructionsCount
+let __instructionsCount__
 const _$_ = () => { // limit instruction injected counter
-  if (++_instructionsCount > 10000) {
+  if (++__instructionsCount__ > 10000) {
     throw new Error('Reached max iteration count')
   }
 }
 
 onmessage = function (e) {
-  _instructionsCount = 0
+  __instructionsCount__ = 0
+  __index__ = 0
   try {
     eval(e.data)
     postMessage(0)

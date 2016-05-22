@@ -13,6 +13,10 @@
   height: 100%
 }
 
+.CodeMirror-linenumber {
+  padding-left: 2px!important; /* sorry mom */
+}
+
 .CodeMirror-scroll {
   /* FIX WEIRD SCROLLS */ 
 }
