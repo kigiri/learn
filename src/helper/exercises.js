@@ -68,7 +68,7 @@ Object.assign(window, {
             console.log('Uh oh, creating ?')
             console.dir(err)
             return github.create.progress(state.exercise(), '')
-              .then(ex => wesh([ ex.content ]))
+              .then(ex => [ ex.content ])
           })
         }).then(files => {
           progressFiles = prepareFiles(files)
