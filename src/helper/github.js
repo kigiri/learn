@@ -31,12 +31,16 @@ const skip404 = err => {
   return ''
 }
 
-const rawDl = (repo, branch, path) => get([
+const buildDlUrl = args => state.editorMode()
+  ? args.join('/') +`?${Date.now()}` // invalidate caching
+  : args.join('/')
+
+const rawDl = (repo, branch, path) => get(buildDlUrl([
   'https://raw.githubusercontent.com',
   repo,
   branch,
   path,
-].join('/')).then(get.text).catch(skip404)
+])).then(get.text).catch(skip404)
 
 const dl = path => rawDl(_.config.repo, 'master', path)
 dl.src = path => rawDl(_.config.srcRepo, _.config.branch, path)
@@ -88,7 +92,7 @@ github.create.progress = (filename, content) => github.create({
 
 github.update.progress = msg => {
   const exercise = state.exercise()
-  const content = state.progress()
+  const content = state.progress.current()
   const path = getProgressPath(exercise)
   const ref = 'master'
   const repo = _.config.repo
@@ -107,12 +111,12 @@ github.update.progress = msg => {
       .catch(err => {
         if (not404(err)) throw err
         return github.create(reqBody)
-      }))
+      }).then(() => console.log(reqBody.message)))
 }
 
 github.update.tests = msg => {
   const exercise = state.exercise()
-  const content = state.test()
+  const content = state.test.current()
   const path = `tests/${exercise}`
   const ref = _.config.branch
   const repo = _.config.srcRepo
@@ -131,7 +135,7 @@ github.update.tests = msg => {
       .catch(err => {
         if (not404(err)) throw err
         return github.create(reqBody)
-      }))
+      }).then(() => console.log(reqBody.message)))
 }
 
 // shorthands for known repositories :
