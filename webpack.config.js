@@ -25,7 +25,7 @@ const config = _.defaults({
 config.plugins.push(new ProgressBarPlugin(),
   new webpack.optimize.OccurrenceOrderPlugin(true),
   new webpack.optimize.AggressiveMergingPlugin(),
-  new syncPlugin(),
+  // new syncPlugin(),
   new webpack.optimize.UglifyJsPlugin({
     exclude: /[-_.]min\.js/i,
     sourceMap: false,
@@ -41,7 +41,7 @@ config.module.loaders.push({
   test: /\.jsx?$/,
   include,
   loader: 'babel',
-  query: { presets: ['modern'] }
+  query: { presets: ['es2015'] }
 });
 
 module.exports = config;
