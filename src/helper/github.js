@@ -34,9 +34,10 @@ const rawDl = (repo, path) => fetch([
 const dl = path => rawDl(_.config.repo, path)
 dl.src = path => rawDl(_.config.srcRepo, path)
 
-const github = api(_, baseHeaders, {
-  fork: { method: 'POST', url: `${API}/repos/:repo/forks` },
+const github = Object.assign(api(_, {}, {
   browse: `${API}/repos/:repo/contents/:path?ref`,
+}), api(_, baseHeaders, {
+  fork: { method: 'POST', url: `${API}/repos/:repo/forks` },
   loadUser: `${API}/user`,
   loadUpstream: `${API}/repos/:config.srcRepo/git/refs/heads/:config.branch`,
   update: {
@@ -54,21 +55,19 @@ const github = api(_, baseHeaders, {
       path: String,
       message: String,
       content: content => btoa(String(content)),
-      branch: branch => branch || _.config.branch,
-      committer: {
-        name: 'Lambda Lover',
-        email: 'me@lambda.love',
-      },
+      branch: branch => branch || 'master',
     },
   },
-})
+}))
 
 github.dl = dl
 
-const getProgressPath = (name) => `${_.config.branch}-${
+const getProgressPath = name => `${_.config.branch}-${
   _.config.srcRepo.replace('/', '-')
 }/${name || ''}`
 
+
+window.github = github
 
 github.dl.test = name => dl.src(`tests/${name}`)
 github.dl.progress = name => is.undef(_.config.repo)

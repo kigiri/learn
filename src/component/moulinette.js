@@ -21,9 +21,7 @@ const applyCook = annotations => {
 }
 
 const readOnlyConf = defaultConf.readOnly()
-const editableConf = defaultConf.editable({
-
-})
+const editableConf = defaultConf.editable()
 
 let _prevToCleanup = () => {}
 const render = state => {

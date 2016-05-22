@@ -48,10 +48,10 @@ const api = (available, baseHeaders, routes) => map(routes, base => {
     }
 
     // encode body
-    if (options.body) {
-      options.body = JSON.stringify(map(options.body, (fn, key) => is.fn(fn)
+    if (base && base.body) {
+      options.body = wesh(JSON.stringify(map(base.body, (fn, key) => is.fn(fn)
         ? fn(args[key])
-        : fn))
+        : fn)))
     }
 
     const errorTrace = Error('cached stack trace')

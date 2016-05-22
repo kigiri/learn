@@ -52,16 +52,16 @@ Object.assign(window, {
           state.config.update({ repo: repo.full_name })
           console.log('You are successfully logged in, using repo',
             repo.full_name)
-          // return github.browse.progress().catch(err => {
-            // console.log('Uh oh, creating ?', err)
+          return github.browse.progress().catch(err => {
+            console.log('Uh oh, creating ?', err)
             return github.create.progress(state.exercise(), '')
               .then(ex => wesh([ ex.content ]))
-            // })
+            })
         }).then(files => {
           progressFiles = prepareFiles(files)
           console.log('progress restaured !, jumping to exercise',
             progressFiles.__last__.name)
-          state.exercise.set(progressFiles.__last__)
+          state.exercise.set(progressFiles.__last__.name)
         })
     },
   },
