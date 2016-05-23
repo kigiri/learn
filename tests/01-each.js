@@ -23,7 +23,7 @@ isTrue(counter === 10)
 // the second argument should be the index
 each((value, index) => isTrue(baseTestArray[index] === value), baseTestArray)
 
-// the third and last argument should be the index
+// the third and last argument should be the array
 each((v, i, givenArray) => isTrue(baseTestArray === givenArray), baseTestArray)
 
 // each must return the given array
