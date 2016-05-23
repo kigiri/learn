@@ -31,19 +31,18 @@ const getValue = (collection, ...args) => {
   const get = getAccessor(collection)
   return args.length
     ? get(collection, args[0])
-    : key => get(collection, key) 
-  }
+    : key => get(collection, key)
 }
 
 const getLength = collection => {
   switch (getCollectionType(collection)) {
-    case 'map': case: 'set': return collection.size
+    case 'map': case 'set': return collection.size
     case 'object': return Object.keys(collection).length
     default: return collection.length || 0
   }
 }
 
-const collectionEqual((a, b) => {
+const collectionEqual = (a, b) => {
   if (getLength(a) !== getLength(b)) throw Error('Collection length differs')
   const typeA = getCollectionType(a)
   const typeB = getCollectionType(b)
@@ -54,7 +53,8 @@ const collectionEqual((a, b) => {
   each((value, key) => {
     if (value !== get(key)) throw Error(`Values mismatch for key ${key}`)
   }, a)
-})
+}
+
 const arrayToObject = arr => {
   const obj = {}
   return each((value, key) => obj[key] = value)
