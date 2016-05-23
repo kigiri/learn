@@ -25,6 +25,7 @@ const __load = key => {
   const ex = tests[state.exercise()]
   if (!ex || !ex[key]) return console.warn(`unable to find ${key} test`)
   console.log(`loading ${unabriged[key]} test : ${ex[key].name}`)
+  github.update.progress('autosave')
   state.exercise.set(ex[key].name)
 }
 
@@ -45,6 +46,7 @@ const prepareFiles = arr => {
 }
 
 let progressFiles = {}
+
 Object.assign(window, {
   next: loadNext,
   prev: loadPrev,
@@ -65,20 +67,21 @@ Object.assign(window, {
           console.log('You are successfully logged in, using repo',
             repo.full_name)
           return github.browse.progress().catch(err => {
-            console.log('Uh oh, creating ?')
-            console.dir(err)
-            return github.create.progress(state.exercise(), '')
-              .then(ex => [ ex.content ])
+            console.log('Oh ho ! first time arround ? Welcome !')
+            console.log('Let me commit your first progress file :)')
+            return github.create.progress.current().then(ex => [ ex.content ])
           })
         }).then(files => {
           progressFiles = prepareFiles(files)
-          console.log('progress restaured, jumping to exercise',
-            progressFiles.__last__.name)
+          if (files.length > 1) {
+            console.log('progress restaured, jumping to exercise',
+              progressFiles.__last__.name)
+          }
           state.exercise.set(progressFiles.__last__.name)
         })
     },
   },
-  commit: msg => {},
+  commit: github.update.progress,
   loadExercise: state.exercise.set,
   load: hash.set,
 })
@@ -99,9 +102,9 @@ immediate(state.exercise, ex => {
   }
   
   if (!window.localStorage[ex]) {
-    github.dl.progress(ex).then(state.progress.set)
+    github.dl.progress(ex).catch(github.skip404).then(state.progress.set)
   }
-  github.dl.test(ex).then(state.test.set)
+  github.dl.test(ex).catch(github.skip404).then(state.test.set)
 })
 
 // load repo

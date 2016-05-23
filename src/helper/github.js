@@ -40,7 +40,7 @@ const rawDl = (repo, branch, path) => get(buildDlUrl([
   repo,
   branch,
   path,
-])).then(get.text).catch(skip404)
+])).then(get.text)
 
 const dl = path => rawDl(_.config.repo, 'master', path)
 dl.src = path => rawDl(_.config.srcRepo, _.config.branch, path)
@@ -57,8 +57,7 @@ const github = Object.assign(api(_, {}, {
 }), api(_, baseHeaders, {
   fork: { method: 'POST', url: `${API}/repos/:repo/forks` },
   loadUser: `${API}/user`,
-  loadUpstream: `${API}/repos/:config.srcRepo/git/refs/heads/:config.branch`,
-  update: {
+  _update: {
     method: 'PUT',
     url: `${API}/repos/:repo/contents/:path`,
     body: Object.assign({ sha: String }, createBody)
@@ -69,6 +68,22 @@ const github = Object.assign(api(_, {}, {
     body: createBody,
   },
 }))
+
+github.not404 = not404
+github.skip404 = skip404
+
+github.update = args => args.sha ? github._update(args) : github.create(args)
+
+// force get, will create file if missing
+github.fget = args => github.browse(args).catch(err => {
+  if (not404(err)) throw err
+  return github.create({
+    message: 'init file '+ args.path,
+    content: '',
+    branch: args.ref,
+    path: args.path,
+  })
+})
 
 github.dl = dl
 
@@ -87,9 +102,13 @@ github.dl.progress.current = () => github.dl.progress(state.exercise())
 
 github.create.progress = (filename, content) => github.create({
   path: getProgressPath(filename),
+  repo: _.config.repo,
   message: 'Init progress for ex '+ filename,
   content: content || '',
 })
+
+github.create.progress.current = () => github.create
+  .progress(state.exercise(), state.progress.current())
 
 const update = (key, opts) => {
   const { ref, repo } = opts
@@ -110,11 +129,11 @@ const update = (key, opts) => {
   return github.dl[key](exercise).then(value => (value === content)
     ? console.log('no changes to commit')
     : github.browse({ path, ref, repo })
-      .then(({ sha }) => github.update(Object.assign({ sha }, reqBody)))
-      .catch(err => {
-        if (not404(err)) throw err
-        return github.create(reqBody)
-      }).then(() => console.log(reqBody.message)))
+      .then(({ sha }) => github.update(Object.assign({ sha }, reqBody))))
+    .catch(err => {
+      if (not404(err)) throw err
+      return github.create(reqBody)
+    }).then(() => console.log(reqBody.message))
 }
 
 github.update.progress = msg => update('progress', {
@@ -160,7 +179,11 @@ github.browse.tests = () => github.browse({
   path: 'tests'
 })
 
-github.fork.progress = () => github.fork({ repo: 'kigiri/lambda-love-progress'})
+github.fork.progress = () => github.fork({
+  repo: state.editorMode()
+    ? 'kigiri/lambda-love-progress-editor'
+    : 'kigiri/lambda-love-progress'
+})
 
 github.verifyUser = user => {
   if (!user || !user.login) {
