@@ -40,8 +40,8 @@ what about... some curry !
 const storeArray = []
 const accummulate = each(value => storeArray.push(value))
 
-accummulate([ 1, 2 , 3 ])
-accummulate([ 4, 5 , 6 ])
+accummulate([ 1, 2, 3 ])
+accummulate([ 4, 5, 6 ])
 
 isTrue(storeArray.length === 6)
 
