@@ -15,9 +15,7 @@ const _ = {}
 // github headers
 const baseHeaders = {
   Accept: 'application/vnd.github.v3+json',
-  Authorization: window.localStorage.__ID__
-    ? ('Basic '+ window.localStorage.__ID__)
-    : undefined
+  Authorization: window.localStorage.__ID__,
 }
 
 const syncConfig = c => _.config = c
@@ -186,14 +184,20 @@ github.fork.progress = () => github.fork({
 })
 
 github.verifyUser = user => {
-  if (!user || !user.login) {
-    if (!baseHeaders.Authorization) return Promise.reject(Error('404'))
+  if (!user || !(user.login || user.token)) {
+    if (!baseHeaders.Authorization) {
+      return Promise.reject(Error('Missing Authorization Credentials'))
+    }
   } else {
-    const id = btoa(user.login +':'+ user.password)
-    window.localStorage.__ID__ = id
-    baseHeaders.Authorization = 'Basic '+ id
+    baseHeaders.Authorization = user.token
+      ? 'token '+ user.token
+      : 'Basic '+ btoa(user.login +':'+ user.password)
   }
-  return github.loadUser().then(config.update)
+  window.localStorage.__ID__ = baseHeaders.Authorization
+  return github.loadUser().then(user => {
+    config.update(user)
+    window.localStorage.login = user.login
+  })
 }
 
 module.exports = github

@@ -54,14 +54,19 @@ Object.assign(window, {
     raw: github,
     logout: () => delete window.localStorage.__ID__,
     login: (login, password) => {
+      let token
       if (!login) {
         if (!window.localStorage.__ID__) {
-          return console.warn('You must enter a username')
+          return console.warn('You must enter your github username or token')
         }
-      } else if (!password) {
-        password = prompt('Enter you github password')
+      } else {
+        if (/[a-f0-9]{40}/.test(login)) {
+          token = login
+        } else if (!password) {
+          password = prompt('Enter you github password')
+        }
       }
-      github.verifyUser({ login, password }).then(github.fork.progress)
+      github.verifyUser({ login, password, token }).then(github.fork.progress)
         .then(repo => {
           state.config.update({ repo: repo.full_name })
           console.log('You are successfully logged in, using repo',

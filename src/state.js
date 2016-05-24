@@ -51,9 +51,8 @@ observ.immediate(hash, () => {
 })
 
 const getEditorModeInitValue = () => {
-  if (!local.__ID__) return false
-  const user = atob(local.__ID__).split(':')[0]
-  return hash.parts()[0] === user
+  if (!local.login) return false
+  return hash.parts()[0] === local.login
 }
 
 const editorMode = observ.check(getEditorModeInitValue())
