@@ -12,7 +12,8 @@
  *
  * - To load next exercise, call the function next.
  * - You can call next and skip any exercise use prev to go back
- * - You don't need to be login, it's only for saving progress
+ * - You don't need to be login, it's only for saving progress.
+ *   Also note that github limit unauthenticated api calls to 60 per hour
  *
  * Once you are login, your credentials are stored in the localStorage.
  *
