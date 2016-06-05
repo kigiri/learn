@@ -5,16 +5,12 @@ Must behave like Array.map plus polymorphism and currying
 
 const getCollectionType = collection => {
   if (!collection) return 'null'
-  switch (typeof collection) {
-    case 'string': return 'string' 
-    case 'object': {
-      switch (collection.constructor) {
-        case Array: return 'array'
-        case Map: return 'map'
-        case Set: return 'set'
-        default: return 'object'
-      }
-    } 
+  switch (collection.constructor) {
+    case String: return 'string'
+    case Array: return 'array'
+    case Map: return 'map'
+    case Set: return 'set'
+    default: return 'object'
   }
 }
 
