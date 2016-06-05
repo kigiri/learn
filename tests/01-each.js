@@ -109,6 +109,15 @@ addEachToCounter(handyObject)
 
 isTrue(counter === 103)
 
+// In objects the second argument should be the object key
+each((value, key) => isTrue(handyObject[key] === value), handyObject)
+
+// the third and last argument should be the object
+each((v, i, givenObject) => isTrue(handyObject === givenObject), handyObject)
+
+// each must return the given object
+isTrue(each(() => {}, handyObject) === handyObject)
+
 /* the cook
 What about something more fancy this time ?
 Mix in some modern Set and Map.
