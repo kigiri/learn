@@ -1,6 +1,7 @@
 const observables = require('state').observ
 const moulinter = require('helper/moulinette-linter')
 const asyncEval = require('lib/eval')
+const { next } = require('helper/exercises')
 const theCook = require('component/the-cook')
 const reduce = require('lib/collection/reduce')
 const series = require('lib/promise-series')
@@ -37,7 +38,14 @@ function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) 
   }
 
   const handleFinalEvalReturn = err => {
-    if (!err) return { test: apply([]) }
+    if (!err) {
+      theCook.say('Next !', true).then(next)
+      return { test: apply([]) }
+    }
+    if (err.test && err.test > maxTest()) {
+      api.update.progress('autosave')
+      maxTest.set(err.test)
+    }
     const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)
     if (!editorMode()) {
       testCm.scrollIntoView({ line: annotations[0].from.line, ch: 0 }, 15)

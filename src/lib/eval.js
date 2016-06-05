@@ -33,6 +33,7 @@ onmessage = function (e) {
     postMessage({
       message: err.message,
       stack: err.stack,
+      test: __index__,
     })
   }
 }`)

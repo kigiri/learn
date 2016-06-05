@@ -63,9 +63,13 @@ const test = observ.format(observ(''), val => {
   return local[key] = val
 })
 
+const maxTest = observ(0)
+exercise(() => maxTest.set(0))
+
 const state = {
   test,
   config,
+  maxTest,
   exercise,
   progress,
   editorMode,

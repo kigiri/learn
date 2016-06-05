@@ -85,8 +85,8 @@ Object.assign(window, {
           state.exercise.set(progressFiles.__last__.name)
         })
     },
+    commit: github.update.progress,
   },
-  commit: github.update.progress,
   loadExercise: state.exercise.set,
   load: hash.set,
 })
