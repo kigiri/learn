@@ -1,10 +1,9 @@
 /* the cook
-Write the function each.
+Well, that was easy...
+And now for something completely different
+write the function each.
 each must behave like Array.forEach, takes in an array as second argument
 */
-
-// isTrue is my assert test, that just check if the given argument is true
-// Otherwhise fail the test here !
 
 const baseTestArray = [ 4, 1, 2, 3 ]
 var counter = 0
@@ -69,16 +68,16 @@ const endTime = performance.now()
 
 const nativeForEachDelta = midTime - startTime
 const yourEachDelta =  endTime - midTime
-
-console.log({ nativeForEachDelta, yourEachDelta })
-
-// You should be faster
-isTrue(yourEachDelta < nativeForEachDelta)
-
 const times = nativeForEachDelta / yourEachDelta
 
 // Arround 5 times faster will pass, but you should have arround 10x
+if (times < 5) {
+  console.log({ nativeForEachDelta, yourEachDelta, times })
+}
+
 isTrue(times > 5)
+
+// Tips: get more info on performance by watching John-David Dalton talks
 
 /* the cook
 while and for have breaks tought, looping through those bigs arrays is slow
@@ -110,15 +109,6 @@ addEachToCounter(handyObject)
 
 isTrue(counter === 103)
 
-// In objects the second argument should be the object key
-each((value, key) => isTrue(handyObject[key] === value), handyObject)
-
-// the third and last argument should be the object
-each((v, i, givenObject) => isTrue(handyObject === givenObject), handyObject)
-
-// each must return the given object
-isTrue(each(() => {}, handyObject) === handyObject)
-
 /* the cook
 What about something more fancy this time ?
 Mix in some modern Set and Map.
@@ -139,6 +129,10 @@ isTrue(counter === 103)
 counter = 0
 addEachToCounter(modernMap)
 isTrue(counter === 103)
+
+// Tips:
+// you can check a type by looking at it's constructor
+isTrue(modernSet.constructor === Set)
 
 /* the cook
 Now that's a nice each !
