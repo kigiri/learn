@@ -77,7 +77,7 @@ const animate = props => {
 
 const getTotal = (total, duration) => total + duration
 
-const theCookSay = (eye, message, immediate) => {
+const theCookSay = (eye, message, immediate) => new Promise(r => {
   if (immediate) {
     clearMessageStack()
     setProps({ eye, message })
@@ -92,7 +92,8 @@ const theCookSay = (eye, message, immediate) => {
     }, messageDurationStack))
   }
   messageDurationStack += message.length * 125
-}
+  setTimeout(r, messageDurationStack)
+})
 
 const linkedMessages = {
   '000000.js': user => {

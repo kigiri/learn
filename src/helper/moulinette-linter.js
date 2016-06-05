@@ -24,9 +24,12 @@ const buildError = (err, text, offset) => {
 
   const splitedText = text.split('\n')
 
-  const buildAnnotation = (lineText, msg) => {
+  const buildAnnotation = (acc, lineText, msg) => {
     const lineError = getErrorPositions(lineText)
-    const line = Math.max(0, Number(lineError[1]) - offset)
+    console.log(lineError)
+    const baseline = Number(lineError[1])
+    const isTest = (baseline > offset)
+    const line = isTest ? (baseline - offset) : (baseline - 1)
     const ch = Number(lineError[2]) - 1
     const textLine = (splitedText[line] || '').slice(ch)
     const end = textLine.indexOf(' ')
@@ -35,17 +38,22 @@ const buildError = (err, text, offset) => {
       ? msg
       : `#${msg}\n${splitedText[line]}\n${lineText}`
 
-    return {
+    const annotation = {
       message,
       from: { line, ch },
       to: { line, ch: end > 0 ? (ch + end) : ch + textLine.length },
     }
+
+    const target = isTest ? acc.test : acc.editor
+    target.push(annotation)
+    return acc
   }
 
-  return [
-    buildAnnotation(firstError, err.message),
-    ...rest.map(buildAnnotation),
-  ]
+  const annotations = { test: [], editor: [] }
+  buildAnnotation(annotations, firstError, err.message)
+  rest.reduce(buildAnnotation, annotations)
+  console.log(annotations)
+  return annotations
 }
 
 module.exports = buildError

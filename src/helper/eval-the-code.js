@@ -10,6 +10,7 @@ const map = require('lib/collection/map')
 const api = require('helper/github')
 const is = require('lib/is')
 
+const maxTest = observables.maxTest
 const exercise = observables.exercise
 const editorMode = observables.editorMode
 
@@ -18,8 +19,7 @@ const baseAnnotation = {
   to:   { line: 0, ch: 10 },
 }
 
-const fromMsg = (apply, message) =>
-  apply([ Object.assign({ message }, baseAnnotation) ])
+const fromMsg = message => [ Object.assign({ message }, baseAnnotation) ]
 
 let _timeout
 let _currentWork = Promise.resolve()
@@ -35,37 +35,39 @@ const requestUpdate = args => _currentWork.then(() => {
 const toLine = a => a.from.line
 const getMax = (a, b) => a > b ? a : b
 
-function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) {
+function getAnnotation({ testCm, testCb, testCode, editorCb, userCode }) {
   if (exercise()) {
     window.localStorage[exercise()] = userCode
   }
 
   const handleFinalEvalReturn = err => {
     if (!err) {
-      theCook.say('Next !', true).then(next)
-      return { test: apply([]) }
+      theCook.animate.load.stop()
+      theCook.animate.smile.play()
+        .then(() => theCook.say('^', 'Next !', true))
+        .then(next)
+      return { test: [] }
     }
     const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)
     if (err.test && err.test > maxTest()) {
       api.update.progress('autosave')
       maxTest.set(err.test)
       testCm.scrollIntoView({
-        line: annotations.map(toLine).reduce(getMax),
+        line: annotations.test.map(toLine).reduce(getMax, 0),
         ch: 0
       }, 15)
     }
-    return { test: apply(annotations) }
+    return annotations
   }
 
   const handleTimeoutErrors = err => {
-    console.log(err)
-    if (!err.startTime) return { test: fromMsg(apply, err.message) }
+    if (!err.startTime) return { test: fromMsg(err.message) }
     const diff = Date.now() - err.startTime
 
-    if (diff < 10000) return { test: fromMsg(apply, err.message) }
+    if (diff < 10000) return { test: fromMsg(err.message) }
 
     return {
-      test: fromMsg(apply, `The eval worker has been blocked for ${diff}ms,`
+      test: fromMsg(`The eval worker has been blocked for ${diff}ms,`
         +' check your code for infinit loops'
         +' and reload the page once you fixed it')
     }
@@ -73,22 +75,26 @@ function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) 
 
   const finalize = ({ editor, test }) => {
     theCook.animate.load.stop()
+    const forTheCook = (test ? test : editor)
+    if (forTheCook && forTheCook.length) {
+      console.log(forTheCook, forTheCook[forTheCook.length - 1].message)
+      theCook.say('x', forTheCook[forTheCook.length - 1].message, true)
+    }
     editorCb(editor || [])
     testCb(test || [])
   }
 
   theCook.animate.load.loop()
   return asyncEval(userCode).then(err => err
-    ? { editor: apply(moulinter(err, userCode, 1)) }
+    ? moulinter(err, userCode, 1)
     : asyncEval(userCode +'\n'+ testCode)
       .then(handleFinalEvalReturn))
     .catch(handleTimeoutErrors)
     .then(finalize)
 }
 
-const buildAnnotation = ({ cb, text }, apply) =>
+const buildAnnotation = ({ cb, text }) =>
   (testCode, testCb, opts, testCm) => requestUpdate({
-    apply,
     testCm,
     testCb,
     testCode,
