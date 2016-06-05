@@ -1,9 +1,10 @@
 /* the cook
-Well, that was easy...
-And now for something completely different
-write the function each.
+Write the function each.
 each must behave like Array.forEach, takes in an array as second argument
 */
+
+// isTrue is my assert test, that just check if the given argument is true
+// Otherwhise fail the test here !
 
 const baseTestArray = [ 4, 1, 2, 3 ]
 var counter = 0
