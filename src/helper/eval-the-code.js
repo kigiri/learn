@@ -32,6 +32,9 @@ const requestUpdate = args => _currentWork.then(() => {
   _timeout = setTimeout(() => {}, 250)
 })
 
+const toLine = a => a.from.line
+const getMax = (a, b) => a > b ? a : b
+
 function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) {
   if (exercise()) {
     window.localStorage[exercise()] = userCode
@@ -42,13 +45,14 @@ function getAnnotation({ apply, testCm, testCb, testCode, editorCb, userCode }) 
       theCook.say('Next !', true).then(next)
       return { test: apply([]) }
     }
+    const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)
     if (err.test && err.test > maxTest()) {
       api.update.progress('autosave')
       maxTest.set(err.test)
-    }
-    const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)
-    if (!editorMode()) {
-      testCm.scrollIntoView({ line: annotations[0].from.line, ch: 0 }, 15)
+      testCm.scrollIntoView({
+        line: annotations.map(toLine).reduce(getMax),
+        ch: 0
+      }, 15)
     }
     return { test: apply(annotations) }
   }
