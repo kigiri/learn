@@ -1,7 +1,7 @@
 const observables = require('state').observ
 const moulinter = require('helper/moulinette-linter')
 const asyncEval = require('lib/eval')
-const { next } = require('helper/exercises')
+const exercises = require('helper/exercises')
 const theCook = require('component/the-cook')
 const reduce = require('lib/collection/reduce')
 const series = require('lib/promise-series')
@@ -13,6 +13,7 @@ const is = require('lib/is')
 const maxTest = observables.maxTest
 const exercise = observables.exercise
 const editorMode = observables.editorMode
+const maxExercise = observables.maxExercise
 
 const baseAnnotation = {
   from: { line: 0, ch: 0  },
@@ -35,6 +36,13 @@ const requestUpdate = args => _currentWork.then(() => {
 const toLine = a => a.from.line
 const getMax = (a, b) => a > b ? a : b
 
+const autoNext = () => {
+  if (exercise() !== maxExercise()) {
+    maxExercise.set(exercise())
+    exercises.next()
+  }
+}
+
 function getAnnotation({ testCm, testCb, testCode, editorCb, userCode }) {
   if (exercise()) {
     window.localStorage[exercise()] = userCode
@@ -45,7 +53,7 @@ function getAnnotation({ testCm, testCb, testCode, editorCb, userCode }) {
       theCook.animate.load.stop()
       theCook.animate.smile.play()
         .then(() => theCook.say('^', 'Next !', true))
-        .then(next)
+        .then(autoNext)
       return { test: [] }
     }
     const annotations = moulinter(err, testCode, count(userCode, '\n') + 2)

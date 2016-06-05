@@ -78,6 +78,7 @@ const state = {
   exemples: observ({}),
   cookProps: observ({ eye: '-', message: 'Loading .....' }),
   codeMirror: observ(),
+  maxExercise: observ(''),
   _hotVersion: observ(0),
   viewHeight: event.viewHeight,
   viewWidth: event.viewWidth,
