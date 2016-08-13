@@ -34,7 +34,7 @@
     "html-webpack-plugin": "^2.7.2",
     "lodash": "^4.1.0",
     "postcss": "^5.0.14",
-    "postcss-loader": "^0.9.1",
+    "postcss-loader": "^0.10.0",
     "precss": "^1.4.0",
     "progress-bar-webpack-plugin": "^1.2.0",
     "promise-loader": "^1.0.0",
