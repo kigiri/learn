@@ -20,7 +20,7 @@
     "uglify-js": "^2.6.1",
     "value-event": "^5.1.0",
     "virtual-dom": "^2.1.1",
-    "whatwg-fetch": "^1.0.0"
+    "whatwg-fetch": "^1.1.0"
   },
   "devDependencies": {
     "app-module-path": "^1.0.5",
