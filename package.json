@@ -42,7 +42,7 @@
     "raw-loader": "^0.5.1",
     "strict-loader": "^1.0.0",
     "style-loader": "^0.13.0",
-    "tape": "^4.4.0",
+    "tape": "^4.6.3",
     "webpack": "^1.12.12",
     "webpack-dev-server": "^1.14.1"
   }
