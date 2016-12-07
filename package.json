@@ -43,7 +43,7 @@
     "strict-loader": "^1.0.0",
     "style-loader": "^0.13.0",
     "tape": "^4.4.0",
-    "webpack": "^1.12.12",
+    "webpack": "^1.14.0",
     "webpack-dev-server": "^1.14.1"
   }
 }
