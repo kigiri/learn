@@ -36,7 +36,7 @@
     "postcss": "^5.0.14",
     "postcss-loader": "^0.9.1",
     "precss": "^1.4.0",
-    "progress-bar-webpack-plugin": "^1.2.0",
+    "progress-bar-webpack-plugin": "^1.9.1",
     "promise-loader": "^1.0.0",
     "pug": "^2.0.0-alpha6",
     "raw-loader": "^0.5.1",
