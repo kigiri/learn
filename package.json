@@ -31,7 +31,7 @@
     "css-loader": "^0.23.1",
     "ftps-promise": "^0.1.0",
     "github": "^1.1.0",
-    "html-webpack-plugin": "^2.7.2",
+    "html-webpack-plugin": "^2.26.0",
     "lodash": "^4.1.0",
     "postcss": "^5.0.14",
     "postcss-loader": "^0.9.1",
