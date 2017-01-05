@@ -23,7 +23,7 @@
     "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
-    "app-module-path": "^1.0.5",
+    "app-module-path": "^2.2.0",
     "autoprefixer": "^6.3.1",
     "babel-core": "^6.4.0",
     "babel-loader": "^6.2.1",
